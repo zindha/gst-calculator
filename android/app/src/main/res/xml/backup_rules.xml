@@ -12,5 +12,7 @@
     <include domain="sharedpref" path="default_trans_type"/>
     <include domain="sharedpref" path="onboarding_done"/>
     <include domain="sharedpref" path="calculation_history"/>
-    <exclude domain="sharedpref" path="."/>
+    <!-- No <exclude path="."> needed: per Android docs, specifying any
+         <include> switches backup to allowlist mode (only the files above
+         are backed up). The old path="." exclude also failed lint. -->
 </full-backup-content>

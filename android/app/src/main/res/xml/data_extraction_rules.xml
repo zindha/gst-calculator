@@ -7,7 +7,8 @@
 
      IMPORTANT: any future SharedPreferences key must be classified. Add it
      to the cloud-backup allowlist below only if it is clearly non-sensitive;
-     the trailing <exclude> keeps everything else out by default. -->
+     per Android docs, listing <include> rules makes cloud backup allowlist
+     mode (everything else stays out automatically). -->
 <data-extraction-rules>
     <cloud-backup>
         <!-- Allowlist: settings and calculation history are not sensitive.
@@ -18,10 +19,9 @@
         <include domain="sharedpref" path="default_trans_type"/>
         <include domain="sharedpref" path="onboarding_done"/>
         <include domain="sharedpref" path="calculation_history"/>
-        <!-- Exclude everything else (any future key). -->
-        <exclude domain="sharedpref" path="."/>
     </cloud-backup>
-    <device-transfer>
-        <include domain="sharedpref" path="."/>
-    </device-transfer>
+    <!-- Device-to-device transfer: no rules here, so everything is
+         transferred intact (documented default) — a user's data moves
+         to their own new device. A path="." include is unnecessary and
+         fails lint. -->
 </data-extraction-rules>
