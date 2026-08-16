@@ -84,11 +84,17 @@ and `app-release.apk` on every push/PR and uploads them as artifacts; pushing
 a `v*` tag also attaches both APKs to a GitHub Release.
 
 The release APK is signed with the debug keystore by default. To sign it with
-your upload key, add these repository secrets (the keystore base64 of the
-`upload-keystore.jks` generated below):
+your upload key, run the one-shot setup script (generates the keystore if
+needed, then stores all four secrets on the repo):
 
-- `KEYSTORE_BASE64` — `base64 -w0 upload-keystore.jks`
-- `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` — from `key.properties`
+```bash
+./tool/setup-release-signing.sh owner/repo
+```
+
+It requires `keytool` (any JDK) and an authenticated `gh` CLI. The secrets
+it sets are `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and
+`KEY_PASSWORD` — the keystore itself (`android/app/upload-keystore.jks`) is
+gitignored and must be backed up separately.
 
 ## Release (Play Store)
 
