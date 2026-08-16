@@ -175,6 +175,48 @@ void main() {
     expect(_captured, isEmpty);
   });
 
+  testWidgets('Segmented control: the whole segment is tappable, '
+      'not just the label', (tester) async {
+    _usePhoneView(tester);
+    SharedPreferences.setMockInitialValues({});
+    _installCapture();
+    await _finishOnboarding(tester);
+
+    await tester.enterText(find.byType(TextField).first, '1000');
+    await tester.pumpAndSettle();
+    expect(find.text('₹1,180.00'), findsOneWidget); // exclusive total
+
+    // Tap the 'Remove GST' segment in the empty area near its bottom edge —
+    // far away from the label, which sits centered. The whole segment must
+    // be a valid touch target, not just the icon + text row.
+    final track = tester.getRect(
+      find.ancestor(
+        of: find.text('Add GST'),
+        matching: find.byWidgetPredicate(
+          (w) =>
+              w is Container &&
+              w.padding == const EdgeInsets.all(3) &&
+              w.decoration is BoxDecoration &&
+              (w.decoration as BoxDecoration).borderRadius ==
+                  BorderRadius.circular(AppRadius.md),
+        ),
+      ),
+    );
+    // Right half of the track = the 'Remove GST' segment; bottom edge is
+    // empty space, never the label.
+    final tapPoint = Offset(track.right - track.width * 0.25, track.bottom - 6);
+    await tester.tapAt(tapPoint);
+    await tester.pumpAndSettle();
+
+    // Toggled to inclusive: ₹1,000 incl. 18% keeps the total at ₹1,000.00.
+    expect(find.text('₹1,000.00'), findsOneWidget);
+    expect(find.text('₹1,180.00'), findsNothing);
+    // Flush the auto-save debounce so no timer is left pending.
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+    expect(_captured, isEmpty);
+  });
+
   testWidgets('History: header actions are disabled when empty, '
       'enabled when entries exist', (tester) async {
     _usePhoneView(tester);
