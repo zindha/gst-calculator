@@ -140,56 +140,64 @@ class _SegmentedControl extends StatelessWidget {
                   ),
                 ),
               ),
-              // Segments.
-              Row(
-                children: List.generate(options.length, (i) {
-                  final selected = i == selectedIndex;
-                  final contentColor = selected
-                      ? (emphasized
-                            ? theme.colorScheme.onPrimary
-                            : theme.colorScheme.primary)
-                      : theme.colorScheme.onSurfaceVariant;
-                  return Expanded(
-                    child: Semantics(
-                      label: options[i].label,
-                      selected: selected,
-                      button: true,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => onSelected(i),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              options[i].icon,
-                              size: 17,
-                              color: contentColor,
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  options[i].label,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    fontFamily: 'Manrope',
-                                    fontSize: emphasized ? 14 : 13,
-                                    height: 1.2,
-                                    fontWeight: selected
-                                        ? FontWeight.w700
-                                        : FontWeight.w600,
-                                    color: contentColor,
+              // Segments. Positioned.fill makes the row span the full track
+              // height — as a plain Stack child it was top-aligned, which is
+              // why the icon + label sat high inside the control. Each segment
+              // then centers its content, so icon and text stay vertically
+              // centered as one unit in both states.
+              Positioned.fill(
+                child: Row(
+                  children: List.generate(options.length, (i) {
+                    final selected = i == selectedIndex;
+                    final contentColor = selected
+                        ? (emphasized
+                              ? theme.colorScheme.onPrimary
+                              : theme.colorScheme.primary)
+                        : theme.colorScheme.onSurfaceVariant;
+                    return Expanded(
+                      child: Semantics(
+                        label: options[i].label,
+                        selected: selected,
+                        button: true,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => onSelected(i),
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  options[i].icon,
+                                  size: 17,
+                                  color: contentColor,
+                                ),
+                                const SizedBox(width: AppSpacing.sm),
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      options[i].label,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        fontFamily: 'Manrope',
+                                        fontSize: emphasized ? 14 : 13,
+                                        height: 1.2,
+                                        fontWeight: selected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
+                                        color: contentColor,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
             ],
           ),

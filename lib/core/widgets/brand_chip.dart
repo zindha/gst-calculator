@@ -85,33 +85,51 @@ class _BrandChipState extends State<BrandChip> {
           child: AnimatedContainer(
             duration: duration,
             curve: Curves.easeOutCubic,
+            // Content-driven height (≈ AppDimens.chip at the standard text
+            // scale): the pill hugs its content so the icon + label are always
+            // perfectly vertically centered, and every pill in a group shares
+            // identical geometry because the content metrics are identical.
+            // The pill grows uniformly when text scaling increases instead of
+            // clipping inside a fixed height.
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,
-              vertical: 10,
+              vertical: 12,
             ),
             decoration: BoxDecoration(
               color: fill,
               borderRadius: BorderRadius.circular(AppRadius.sm),
-              border: Border.all(
-                color: border,
-                width: selected ? 1.5 : 1,
-              ),
+              // Uniform border width in both states: Container adds the
+              // decoration's border to its layout size, so a wider selected
+              // border made the selected pill 1px taller (baseline jump).
+              // The selected state is conveyed by the fill, check and bold
+              // label instead — the border is the same color as the fill and
+              // was never visible.
+              border: Border.all(color: border, width: 1),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (widget.icon != null) ...[
-                  AnimatedSwitcher(
-                    duration: duration,
-                    child: Icon(
-                      widget.icon,
-                      key: ValueKey(widget.icon),
-                      size: 16,
-                      color: content,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                ],
+                // Fixed-size icon slot, always reserved: a selected check (or
+                // the + / edit glyph) appears inside the same 16×16 space, so
+                // the label never shifts horizontally and selected/unselected
+                // pills keep identical dimensions.
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child:
+                      widget.icon == null
+                          ? null
+                          : AnimatedSwitcher(
+                            duration: duration,
+                            child: Icon(
+                              widget.icon,
+                              key: ValueKey(widget.icon),
+                              size: 16,
+                              color: content,
+                            ),
+                          ),
+                ),
+                const SizedBox(width: 6),
                 Text(
                   widget.label,
                   style: TextStyle(

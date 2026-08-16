@@ -26,10 +26,14 @@ class A11y {
       Semantics(label: label, child: child);
 
   /// Creates an icon button with haptic feedback and a tooltip.
+  ///
+  /// When [onPressed] is null the button renders disabled (grayed out) — use
+  /// this for state-aware actions that are unavailable in the current state
+  /// rather than hiding the button entirely.
   static Widget iconButton({
     required IconData icon,
     required String label,
-    required VoidCallback onPressed,
+    VoidCallback? onPressed,
     VoidCallback? onLongPress,
   }) {
     return Semantics(
@@ -37,10 +41,13 @@ class A11y {
       child: IconButton(
         icon: Icon(icon),
         tooltip: label,
-        onPressed: () {
-          tap();
-          onPressed();
-        },
+        onPressed:
+            onPressed == null
+                ? null
+                : () {
+                  tap();
+                  onPressed();
+                },
         onLongPress:
             onLongPress != null
                 ? () {

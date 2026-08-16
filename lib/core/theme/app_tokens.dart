@@ -65,6 +65,11 @@ abstract final class AppDimens {
   /// Height of compact secondary controls (transaction type).
   static const double controlCompact = 44;
 
+  /// Target height of brand pills (rate slabs, quick amounts, custom).
+  /// Pills stay content-driven so they grow gracefully with text scaling;
+  /// this documents the default pill height at the standard text scale.
+  static const double chip = 40;
+
   /// Maximum content width on large screens (tablet/desktop).
   static const double maxContentWidth = 640;
 }

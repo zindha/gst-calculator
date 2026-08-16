@@ -28,24 +28,31 @@ class HistoryScreen extends ConsumerWidget {
             AppHeader(
               title: 'History',
               actions: [
-                if (entries.isNotEmpty)
-                  A11y.iconButton(
-                    icon: Icons.file_download_outlined,
-                    label: 'Export as CSV',
-                    onPressed: () {
-                      HapticFeedback.lightImpact();
-                      CsvExport.shareHistoryCsv(entries);
-                    },
-                  ),
-                if (entries.isNotEmpty)
-                  A11y.iconButton(
-                    icon: Icons.delete_sweep_outlined,
-                    label: 'Clear all history',
-                    onPressed: () {
-                      HapticFeedback.mediumImpact();
-                      _confirmClearAll(context, ref);
-                    },
-                  ),
+                // State-aware actions: always visible, disabled (grayed out)
+                // when there is nothing to export or clear, so the controls
+                // never disappear and never act on empty data.
+                A11y.iconButton(
+                  icon: Icons.file_download_outlined,
+                  label: 'Export as CSV',
+                  onPressed:
+                      entries.isEmpty
+                          ? null
+                          : () {
+                            HapticFeedback.lightImpact();
+                            CsvExport.shareHistoryCsv(entries);
+                          },
+                ),
+                A11y.iconButton(
+                  icon: Icons.delete_sweep_outlined,
+                  label: 'Clear all history',
+                  onPressed:
+                      entries.isEmpty
+                          ? null
+                          : () {
+                            HapticFeedback.mediumImpact();
+                            _confirmClearAll(context, ref);
+                          },
+                ),
               ],
             ),
             Expanded(
@@ -59,7 +66,7 @@ class HistoryScreen extends ConsumerWidget {
                         ? const EmptyState(
                           icon: Icons.history_rounded,
                           title: 'No calculations yet',
-                          subtitle: 'Your GST calculations will appear here',
+                          subtitle: 'Your saved calculations will appear here',
                         )
                         : MaxWidthWrapper(
                           child: ListView.builder(

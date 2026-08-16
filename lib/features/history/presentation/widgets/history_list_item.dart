@@ -46,7 +46,7 @@ class HistoryListItem extends ConsumerWidget {
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
           color: theme.colorScheme.error,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
         child: const Icon(Icons.delete_rounded, color: Colors.white),
       ),
@@ -77,7 +77,9 @@ class HistoryListItem extends ConsumerWidget {
         margin: const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
           color: theme.gstColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppRadius.md),
+          // Same radius as the result card and settings cards so every
+          // surface in the app shares one card language.
+          borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
           ),
@@ -85,7 +87,7 @@ class HistoryListItem extends ConsumerWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             onTap: onTap,
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
