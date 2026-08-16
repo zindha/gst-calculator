@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Data extraction rules for Android 12+ (cloud backup + device transfer).
+     Cloud backup: allowlist of NON-SENSITIVE SharedPreferences keys only
+     (settings + calculation history). Everything else stays on-device.
+     Device-to-device transfer keeps everything so a user's data moves intact
+     to their own new device.
+
+     IMPORTANT: any future SharedPreferences key must be classified. Add it
+     to the cloud-backup allowlist below only if it is clearly non-sensitive;
+     the trailing <exclude> keeps everything else out by default. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Allowlist: settings and calculation history are not sensitive.
+             Everything else stays out of the cloud copy. -->
+        <include domain="sharedpref" path="theme_mode"/>
+        <include domain="sharedpref" path="default_slab"/>
+        <include domain="sharedpref" path="default_calc_type"/>
+        <include domain="sharedpref" path="default_trans_type"/>
+        <include domain="sharedpref" path="onboarding_done"/>
+        <include domain="sharedpref" path="calculation_history"/>
+        <!-- Exclude everything else (any future key). -->
+        <exclude domain="sharedpref" path="."/>
+    </cloud-backup>
+    <device-transfer>
+        <include domain="sharedpref" path="."/>
+    </device-transfer>
+</data-extraction-rules>

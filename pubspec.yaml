@@ -1,0 +1,53 @@
+name: gst_calculator
+description: "GST Calculator - Calculate GST for Indian tax slabs"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.7.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^2.6.1
+  share_plus: ^12.0.2
+  intl: ^0.19.0
+  shared_preferences: ^2.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.4
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Fraunces
+      fonts:
+        - asset: assets/fonts/Fraunces.ttf
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope.ttf
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+    image_path: "app-icon.png"
+  image_path: "app-icon.png"
+  # Navy matches the icon's own background so the transparent corners blend
+  # seamlessly on adaptive Android icons and flattened iOS icons.
+  adaptive_icon_background: "#002162"
+  adaptive_icon_foreground: "app-icon.png"
+  background_color_ios: "#002162"
+  remove_alpha_ios: true
+
+flutter_native_splash:
+  color: "#0B5D43"
+  image: assets/icon/splash_logo.png
+  android: true
+  ios: true

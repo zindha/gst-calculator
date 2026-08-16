@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Backup rules for Android Auto Backup (Android 11 and below).
+     Mirrors data_extraction_rules.xml: only non-sensitive SharedPreferences
+     keys (settings + calculation history) are backed up to the cloud.
+
+     IMPORTANT: keep this allowlist in sync with data_extraction_rules.xml
+     whenever a SharedPreferences key is added or reclassified. -->
+<full-backup-content>
+    <include domain="sharedpref" path="theme_mode"/>
+    <include domain="sharedpref" path="default_slab"/>
+    <include domain="sharedpref" path="default_calc_type"/>
+    <include domain="sharedpref" path="default_trans_type"/>
+    <include domain="sharedpref" path="onboarding_done"/>
+    <include domain="sharedpref" path="calculation_history"/>
+    <exclude domain="sharedpref" path="."/>
+</full-backup-content>
