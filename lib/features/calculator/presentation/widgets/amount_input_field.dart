@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/color_presets.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/accessibility_helper.dart';
 import '../../../../core/widgets/brand_chip.dart';
@@ -60,6 +61,12 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
     final gstColors = theme.gstColors;
     final duration = appMotion(context);
     final primary = theme.colorScheme.primary;
+    // The entered value is primary content: dark charcoal in light mode,
+    // near-white in dark — never the brand navy, which stays an accent.
+    final textPrimary =
+        theme.brightness == Brightness.dark
+            ? BrandColors.textPrimaryDark
+            : BrandColors.textPrimaryLight;
 
     final amountStyle = TextStyle(
       fontFamily: 'Manrope',
@@ -67,7 +74,7 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
       fontWeight: FontWeight.w700,
       height: 1.15,
       letterSpacing: -0.5,
-      color: theme.colorScheme.onSurface,
+      color: textPrimary,
       fontVariations: const [FontVariation('wght', 700)],
       fontFeatures: const [FontFeature.tabularFigures()],
     );
@@ -110,17 +117,24 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
               hintText: '0.00',
               hintStyle: amountStyle.copyWith(
                 color: theme.colorScheme.onSurfaceVariant.withValues(
-                  alpha: 0.45,
+                  alpha: 0.6,
                 ),
               ),
-              prefixIcon: Padding(
-                padding: const EdgeInsets.only(left: AppSpacing.xl, right: 10),
-                child: Text(
-                  '₹',
-                  style: amountStyle.copyWith(
-                    fontSize: 34,
-                    height: 1.0,
-                    color: theme.colorScheme.onSurface,
+              // Fixed-width rupee slot, independent of the editable area: the
+              // symbol is muted and centered so it reads as a label for the
+              // number, never part of it, and it cannot shift as the value
+              // changes. The 46px slot plus the small left inset keep the
+              // cursor and digits clear of the symbol.
+              prefixIcon: SizedBox(
+                width: 46,
+                child: Center(
+                  child: Text(
+                    '₹',
+                    style: amountStyle.copyWith(
+                      fontSize: 32,
+                      height: 1.0,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
@@ -144,10 +158,10 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: 20,
-              ),
+              // Left inset stays small because the rupee slot already provides
+              // the visual separation; right keeps comfortable breathing room
+              // before the clear button.
+              contentPadding: const EdgeInsets.fromLTRB(4, 20, 16, 20),
             ),
             onChanged: (value) {
               ref.read(gstCalculatorProvider.notifier).updateAmount(value);
@@ -156,33 +170,42 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
         ),
         const SizedBox(height: AppSpacing.md),
 
-        // Quick action chips — lightweight secondary actions.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
+        // Quick action chips — a deliberate 2×2 grid: every pill shares one
+        // geometry, both rows are balanced edge to edge, and the layout reads
+        // as intentional instead of an accidental wrap.
+        Column(
           children: [
-            ..._quickAmounts.map(
-              (amount) => BrandChip(
-                label: _quickLabel(amount),
-                icon: Icons.add_rounded,
-                tinted: true,
-                semanticsLabel: 'Add ${_quickLabel(amount)} to amount',
-                onTap: () {
-                  A11y.tap();
-                  ref
-                      .read(gstCalculatorProvider.notifier)
-                      .quickAddAmount(amount);
-                  widget.controller.text =
-                      ref.read(gstCalculatorProvider).amountText;
-                  widget.controller.selection = TextSelection.fromPosition(
-                    TextPosition(offset: widget.controller.text.length),
-                  );
-                },
+            for (var row = 0; row < _quickAmounts.length; row += 2) ...[
+              if (row > 0) const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  for (var i = row; i < row + 2; i++) ...[
+                    if (i > row) const SizedBox(width: AppSpacing.sm),
+                    Expanded(child: _buildQuickChip(_quickAmounts[i])),
+                  ],
+                ],
               ),
-            ),
+            ],
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildQuickChip(double amount) {
+    return BrandChip(
+      label: _quickLabel(amount),
+      icon: Icons.add_rounded,
+      tinted: true,
+      semanticsLabel: 'Add ${_quickLabel(amount)} to amount',
+      onTap: () {
+        A11y.tap();
+        ref.read(gstCalculatorProvider.notifier).quickAddAmount(amount);
+        widget.controller.text = ref.read(gstCalculatorProvider).amountText;
+        widget.controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: widget.controller.text.length),
+        );
+      },
     );
   }
 

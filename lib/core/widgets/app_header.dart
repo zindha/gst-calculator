@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_tokens.dart';
+import '../theme/color_presets.dart';
 
 /// The application's standard screen header.
 ///
@@ -32,6 +33,12 @@ class AppHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    // Primary content is dark charcoal in light mode / near-white in dark —
+    // the brand navy stays an accent, never the title colour.
+    final titleColor = isDark
+        ? BrandColors.textPrimaryDark
+        : BrandColors.textPrimaryLight;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(AppSpacing.xl, 10, AppSpacing.md, 6),
@@ -53,16 +60,18 @@ class AppHeader extends StatelessWidget {
                         // Display titles are extra bold (variable-font wght
                         // 800) with tight tracking so the wordmark carries
                         // the same strong, confident weight as the icon.
-                        ? const TextStyle(
+                        ? TextStyle(
                           fontFamily: 'Manrope',
                           fontSize: 30,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.6,
-                          fontVariations: [FontVariation('wght', 800)],
+                          color: titleColor,
+                          fontVariations: const [FontVariation('wght', 800)],
                         )
                         : theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.3,
+                          color: titleColor,
                         ),
               ),
             ),

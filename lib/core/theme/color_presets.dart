@@ -43,6 +43,16 @@ class BrandColors {
   /// Brand white — the icon's badge colour (card/surface base).
   static const Color white = Color(0xFFFEFEFE);
 
+  // ── Primary content text (title / hero numerals) ────────────────────────
+
+  /// Light-theme primary content — dark charcoal, the deliberate refinement
+  /// of the previous near-black title. Content is charcoal, brand navy is the
+  /// accent, neutrals are gray — never the reverse.
+  static const Color textPrimaryLight = Color(0xFF181A1F);
+
+  /// Dark-theme primary content — near-white on the deep navy surfaces.
+  static const Color textPrimaryDark = Color(0xFFF1F3F9);
+
   // ── Surfaces (derived from the brand navy/white pair) ─────────────────
 
   /// Light app background — cool off-white (white + a hint of navy).

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/color_presets.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/utils/gst_math.dart';
@@ -162,7 +163,10 @@ class ResultsBreakdownCard extends ConsumerWidget {
                       fontWeight: FontWeight.w700,
                       height: 1.1,
                       letterSpacing: -0.5,
-                      color: theme.colorScheme.onSurface,
+                      color:
+                          theme.brightness == Brightness.dark
+                              ? BrandColors.textPrimaryDark
+                              : BrandColors.textPrimaryLight,
                       fontVariations: const [FontVariation('wght', 700)],
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
@@ -264,7 +268,9 @@ class ResultsBreakdownCard extends ConsumerWidget {
         vertical: AppSpacing.xl,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        // Same radius as the filled result card so the empty/result swap
+        // never changes the surface geometry.
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         color: theme.gstColors.cardBackground.withValues(
           alpha: theme.brightness == Brightness.dark ? 0.5 : 0.65,
         ),

@@ -34,6 +34,7 @@ class HistoryScreen extends ConsumerWidget {
                 A11y.iconButton(
                   icon: Icons.file_download_outlined,
                   label: 'Export as CSV',
+                  iconSize: 22,
                   onPressed:
                       entries.isEmpty
                           ? null
@@ -45,6 +46,7 @@ class HistoryScreen extends ConsumerWidget {
                 A11y.iconButton(
                   icon: Icons.delete_sweep_outlined,
                   label: 'Clear all history',
+                  iconSize: 22,
                   onPressed:
                       entries.isEmpty
                           ? null

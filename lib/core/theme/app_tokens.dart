@@ -25,6 +25,11 @@ abstract final class AppSpacing {
   /// 24 — section separation.
   static const double xxl = 24;
 
+  /// 28 — comfortable rhythm between major calculator sections (the gap
+  /// between AMOUNT → CALCULATION → GST RATE → RESULT reads as deliberate
+  /// because every section uses the same value).
+  static const double section = 28;
+
   /// 32 — major section separation / generous padding.
   static const double xxxl = 32;
 }

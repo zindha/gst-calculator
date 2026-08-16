@@ -217,6 +217,52 @@ void main() {
     expect(_captured, isEmpty);
   });
 
+  testWidgets('Quick-add amounts: deliberate 2×2 grid, identical geometry', (
+    tester,
+  ) async {
+    _usePhoneView(tester);
+    SharedPreferences.setMockInitialValues({});
+    _installCapture();
+    await _finishOnboarding(tester);
+
+    // All four quick-add pills exist.
+    for (final label in ['+₹100', '+₹500', '+₹1000', '+₹5000']) {
+      expect(find.text(label), findsOneWidget, reason: 'missing $label pill');
+    }
+
+    // Every pill shares identical dimensions — the second row must be the
+    // same component, not an accidental different-sized wrap.
+    final sizes = <Size>[];
+    for (final label in ['+₹100', '+₹500', '+₹1000', '+₹5000']) {
+      sizes.add(tester.getSize(_chipOf(label)));
+    }
+    for (final s in sizes.skip(1)) {
+      expect(s.height, closeTo(sizes.first.height, 0.01),
+          reason: 'all quick-add pills must share one height');
+      expect(s.width, closeTo(sizes.first.width, 0.01),
+          reason: 'all quick-add pills must share one width');
+    }
+
+    // Two intentional rows: the first row shares a top edge, the second row
+    // sits below it on its own edge.
+    final row1Top = tester.getTopLeft(find.text('+₹100')).dy;
+    final row2Top = tester.getTopLeft(find.text('+₹1000')).dy;
+    expect(tester.getTopLeft(find.text('+₹500')).dy, closeTo(row1Top, 0.5),
+        reason: '+₹500 must sit on the same row as +₹100');
+    expect(tester.getTopLeft(find.text('+₹5000')).dy, closeTo(row2Top, 0.5),
+        reason: '+₹5000 must sit on the same row as +₹1000');
+    expect(row2Top, greaterThan(row1Top),
+        reason: 'second quick-add row must sit below the first');
+
+    // Tapping a pill adds to the amount (100 + 18% exclusive = ₹118 total).
+    await tester.tap(find.text('+₹100'));
+    await tester.pumpAndSettle();
+    expect(find.text('₹118.00'), findsOneWidget);
+    expect(find.text('₹100.00'), findsOneWidget); // base row
+
+    expect(_captured, isEmpty);
+  });
+
   testWidgets('History: header actions are disabled when empty, '
       'enabled when entries exist', (tester) async {
     _usePhoneView(tester);

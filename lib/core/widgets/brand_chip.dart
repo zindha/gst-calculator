@@ -107,7 +107,11 @@ class _BrandChipState extends State<BrandChip> {
               border: Border.all(color: border, width: 1),
             ),
             child: Row(
+              // min size keeps pills content-hugging inside a Wrap; under a
+              // tight width (the 2×2 quick-amount grid) the row stretches and
+              // [center] keeps the icon + label centered as one unit.
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Fixed-size icon slot, always reserved: a selected check (or
                 // the + / edit glyph) appears inside the same 16×16 space, so
@@ -130,16 +134,25 @@ class _BrandChipState extends State<BrandChip> {
                           ),
                 ),
                 const SizedBox(width: 6),
-                Text(
-                  widget.label,
-                  style: TextStyle(
-                    fontFamily: 'Manrope',
-                    fontSize: 14,
-                    fontWeight: selected
-                        ? FontWeight.w700
-                        : FontWeight.w600,
-                    height: 1.2,
-                    color: content,
+                // Scale the label down (never up) when a stretched pill is
+                // narrower than its text at large font scales — the same
+                // guard the segmented controls use, so no pill ever clips.
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      widget.label,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 14,
+                        fontWeight: selected
+                            ? FontWeight.w700
+                            : FontWeight.w600,
+                        height: 1.2,
+                        color: content,
+                      ),
+                    ),
                   ),
                 ),
               ],

@@ -62,6 +62,8 @@ class _GstCalculatorScreenState extends ConsumerState<GstCalculatorScreen> {
               leading: const BrandMark(),
               actions: [
                 // Theme switch — part of the app chrome, not an afterthought.
+                // Both header icons share one size (22) so the moon and the
+                // clear glyph read as the same icon family as the brand tile.
                 Consumer(
                   builder: (context, ref, _) {
                     final themeMode = ref.watch(themeModeProvider);
@@ -74,6 +76,7 @@ class _GstCalculatorScreenState extends ConsumerState<GstCalculatorScreen> {
                           themeMode == ThemeMode.dark
                               ? 'Switch to light theme'
                               : 'Switch to dark theme',
+                      iconSize: 22,
                       onPressed: () {
                         final newMode =
                             themeMode == ThemeMode.dark
@@ -90,6 +93,7 @@ class _GstCalculatorScreenState extends ConsumerState<GstCalculatorScreen> {
                 A11y.iconButton(
                   icon: Icons.delete_sweep_outlined,
                   label: 'Clear all',
+                  iconSize: 22,
                   onPressed: _clearAll,
                 ),
               ],
@@ -118,11 +122,11 @@ class _GstCalculatorScreenState extends ConsumerState<GstCalculatorScreen> {
                             controller: _amountController,
                             focusNode: _amountFocusNode,
                           ),
-                          const SizedBox(height: 28),
+                          const SizedBox(height: AppSpacing.section),
                           const CalculationModeToggle(),
                           const SizedBox(height: AppSpacing.xxl),
                           const GstSlabSelector(),
-                          const SizedBox(height: 28),
+                          const SizedBox(height: AppSpacing.section),
                           const ResultsBreakdownCard(),
                           const SizedBox(height: AppSpacing.lg),
                           const QuickActionsBar(),

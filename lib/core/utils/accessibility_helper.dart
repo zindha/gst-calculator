@@ -35,11 +35,12 @@ class A11y {
     required String label,
     VoidCallback? onPressed,
     VoidCallback? onLongPress,
+    double? iconSize,
   }) {
     return Semantics(
       label: label,
       child: IconButton(
-        icon: Icon(icon),
+        icon: Icon(icon, size: iconSize),
         tooltip: label,
         onPressed:
             onPressed == null
