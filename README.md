@@ -77,6 +77,19 @@ flutter build ipa
 flutter build web
 ```
 
+## Continuous integration (GitHub Actions)
+
+A workflow (`.github/workflows/build-apk.yml`) builds both `app-debug.apk`
+and `app-release.apk` on every push/PR and uploads them as artifacts; pushing
+a `v*` tag also attaches both APKs to a GitHub Release.
+
+The release APK is signed with the debug keystore by default. To sign it with
+your upload key, add these repository secrets (the keystore base64 of the
+`upload-keystore.jks` generated below):
+
+- `KEYSTORE_BASE64` — `base64 -w0 upload-keystore.jks`
+- `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` — from `key.properties`
+
 ## Release (Play Store)
 
 ### 1. One-time setup
