@@ -50,11 +50,15 @@ class AppHeader extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style:
                     display
+                        // Display titles are extra bold (variable-font wght
+                        // 800) with tight tracking so the wordmark carries
+                        // the same strong, confident weight as the icon.
                         ? const TextStyle(
                           fontFamily: 'Manrope',
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.5,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.6,
+                          fontVariations: [FontVariation('wght', 800)],
                         )
                         : theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
@@ -70,26 +74,29 @@ class AppHeader extends StatelessWidget {
   }
 }
 
-/// The calculator's brand mark — a rounded ₹ tile that anchors the header.
+/// The calculator's brand mark — the actual app launcher icon rendered as a
+/// small rounded tile that anchors the header (instead of a generic glyph).
 class BrandMark extends StatelessWidget {
   const BrandMark({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Container(
       width: 40,
       height: 40,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: colorScheme.primary,
+        // Navy base matches the icon artwork's own background, so the PNG's
+        // transparent corners blend into one clean rounded tile.
+        color: theme.colorScheme.primary,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
-      child: Icon(
-        Icons.currency_rupee_rounded,
-        size: 22,
-        color: colorScheme.onPrimary,
+      child: Image.asset(
+        'app-icon.png',
+        fit: BoxFit.cover,
+        semanticLabel: 'GST Calculator app icon',
       ),
     );
   }
