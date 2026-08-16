@@ -40,8 +40,10 @@ jobs:
       # Optional: configure release signing from GitHub secrets. Without
       # these secrets the release APK falls back to the debug keystore
       # (see android/app/build.gradle.kts) so the build never fails.
+      # Note: the secrets context cannot be referenced in `if:` conditions,
+      # so the check uses the step env var derived from the secret instead.
       - name: Configure release signing (optional)
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        if: env.KEYSTORE_BASE64 != ''
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
