@@ -7,6 +7,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+# The default GITHUB_TOKEN is read-only; publishing releases (and the
+# tag-based release step below) requires write access to contents.
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build debug + release APK
