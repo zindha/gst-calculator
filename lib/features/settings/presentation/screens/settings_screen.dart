@@ -352,11 +352,14 @@ class _SettingsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.gstColors.cardBackground,
+    // A Material (not a decorated Container) so the ListTiles inside paint
+    // their ink splashes on this surface instead of an invisible
+    // intermediate DecoratedBox — same card look, correct ink behavior.
+    return Material(
+      color: theme.gstColors.cardBackground,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(
+        side: BorderSide(
           color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
         ),
       ),

@@ -30,20 +30,10 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: primary.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 32,
-                color: primary.withValues(alpha: 0.7),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
+            // A quiet icon accent — no tinted circle or illustration. The
+            // message carries the empty state.
+            Icon(icon, size: 26, color: primary.withValues(alpha: 0.7)),
+            const SizedBox(height: AppSpacing.md),
             Text(
               title,
               style: theme.textTheme.titleMedium?.copyWith(

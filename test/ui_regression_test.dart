@@ -358,7 +358,7 @@ void main() {
 
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
-    expect(find.text('Tailored Settings & Themes'), findsOneWidget);
+    expect(find.text('Settings & Themes'), findsOneWidget);
     expect(find.text('Get Started'), findsOneWidget);
 
     await tester.tap(find.text('Get Started'));

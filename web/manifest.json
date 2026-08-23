@@ -1,11 +1,11 @@
 {
-    "name": "gst_calculator",
-    "short_name": "gst_calculator",
+    "name": "GST Calculator",
+    "short_name": "GST Calc",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#002162",
+    "theme_color": "#002162",
+    "description": "Calculate Indian GST (add or remove) across all slabs, with automatic CGST/SGST/IGST breakdown and local history.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

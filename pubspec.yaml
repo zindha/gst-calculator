@@ -27,9 +27,7 @@ flutter:
   assets:
     - app-icon.png
   fonts:
-    - family: Fraunces
-      fonts:
-        - asset: assets/fonts/Fraunces.ttf
+    # One deliberate family: Manrope carries every level of the UI.
     - family: Manrope
       fonts:
         - asset: assets/fonts/Manrope.ttf
@@ -49,7 +47,9 @@ flutter_launcher_icons:
   remove_alpha_ios: true
 
 flutter_native_splash:
-  color: "#0B5D43"
+  # Brand navy — matches the adaptive-icon background, so the splash reads
+  # as the same product as the launcher icon (the white mark is the logo).
+  color: "#002162"
   image: assets/icon/splash_logo.png
   android: true
   ios: true

@@ -3,14 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_tokens.dart';
-import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/widgets/section_label.dart';
 import '../../domain/entities/gst_calculation_type.dart';
 import '../../domain/entities/gst_transaction_type.dart';
 import '../providers/gst_calculator_notifier.dart';
 
 /// Calculation mode controls: the primary "Add GST / Remove GST" selector and
-/// the compact "Intra-State / Inter-State" transaction selector.
+/// the quieter "Intra-State / Inter-State" transaction selector.
 class CalculationModeToggle extends ConsumerWidget {
   const CalculationModeToggle({super.key});
 
@@ -28,13 +27,13 @@ class CalculationModeToggle extends ConsumerWidget {
         const SizedBox(height: AppSpacing.sm),
         Semantics(
           label: 'Calculation mode. Current: ${state.calculationType.label}',
-          child: _SegmentedControl(
+          child: SegmentedControl(
             options: const [
-              _SegmentOption(
+              SegmentOption(
                 label: 'Add GST',
                 icon: Icons.add_circle_outline_rounded,
               ),
-              _SegmentOption(
+              SegmentOption(
                 label: 'Remove GST',
                 icon: Icons.remove_circle_outline_rounded,
               ),
@@ -51,16 +50,16 @@ class CalculationModeToggle extends ConsumerWidget {
             emphasized: true,
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.xs),
         Semantics(
           label: 'Transaction type. Current: ${state.transactionType.label}',
-          child: _SegmentedControl(
+          child: SegmentedControl(
             options: const [
-              _SegmentOption(
+              SegmentOption(
                 label: 'Intra-State',
                 icon: Icons.location_city_rounded,
               ),
-              _SegmentOption(label: 'Inter-State', icon: Icons.public_rounded),
+              SegmentOption(label: 'Inter-State', icon: Icons.public_rounded),
             ],
             selectedIndex: isIntraState ? 0 : 1,
             onSelected: (index) {
@@ -79,25 +78,29 @@ class CalculationModeToggle extends ConsumerWidget {
   }
 }
 
-class _SegmentOption {
+class SegmentOption {
   final String label;
   final IconData icon;
 
-  const _SegmentOption({required this.label, required this.icon});
+  const SegmentOption({required this.label, required this.icon});
 }
 
-/// A two-option segmented control with a sliding thumb.
+/// A two-option selector with a sliding underline.
 ///
-/// [emphasized] selects the thumb treatment: a solid brand-primary thumb for
-/// the primary control versus a quiet tonal thumb for the secondary control.
-/// The selected indicator animates smoothly between segments (~200ms).
-class _SegmentedControl extends StatelessWidget {
-  final List<_SegmentOption> options;
+/// Deliberately container-free: the options sit directly on the page and the
+/// only selection affordance is a 2px brand underline that slides beneath the
+/// active segment — colour, weight and underline, never a pill or a track.
+/// [emphasized] picks the size: a taller, bolder primary control versus a
+/// compact secondary one. Each segment is a full-height, full-width touch
+/// target, not just its label.
+class SegmentedControl extends StatelessWidget {
+  final List<SegmentOption> options;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
   final bool emphasized;
 
-  const _SegmentedControl({
+  const SegmentedControl({
+    super.key,
     required this.options,
     required this.selectedIndex,
     required this.onSelected,
@@ -107,52 +110,42 @@ class _SegmentedControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final gstColors = theme.gstColors;
-    final isDark = theme.brightness == Brightness.dark;
     final duration = appMotion(context, milliseconds: 200);
 
-    final thumbColor = emphasized
-        ? theme.colorScheme.primary
-        : theme.colorScheme.primary.withValues(alpha: isDark ? 0.22 : 0.12);
+    final height = emphasized ? 46.0 : 38.0;
+    final labelSize = emphasized ? 14.0 : 13.0;
+    final iconSize = emphasized ? 17.0 : 16.0;
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final thumbWidth = (constraints.maxWidth / options.length) - 6;
-        return Container(
-          height: emphasized ? AppDimens.control : AppDimens.controlCompact,
-          decoration: BoxDecoration(
-            color: gstColors.inputBackground,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          padding: const EdgeInsets.all(3),
+        final segmentWidth = constraints.maxWidth / options.length;
+        return SizedBox(
+          height: height,
           child: Stack(
             children: [
-              // Sliding thumb.
+              // Sliding underline — the only selection chrome.
               AnimatedAlign(
                 duration: duration,
                 curve: Curves.easeOutCubic,
-                alignment: Alignment(selectedIndex == 0 ? -1 : 1, 0),
+                alignment: Alignment(selectedIndex == 0 ? -1 : 1, 1),
                 child: Container(
-                  width: thumbWidth,
+                  width: segmentWidth,
+                  height: 2,
                   decoration: BoxDecoration(
-                    color: thumbColor,
-                    borderRadius: BorderRadius.circular(AppRadius.md - 3),
+                    color: theme.colorScheme.primary,
+                    borderRadius: BorderRadius.circular(1),
                   ),
                 ),
               ),
-              // Segments. Positioned.fill makes the row span the full track
-              // height — as a plain Stack child it was top-aligned, which is
-              // why the icon + label sat high inside the control. Each segment
-              // then centers its content, so icon and text stay vertically
-              // centered as one unit in both states.
+              // Segments. Positioned.fill makes the row span the full control
+              // height; each segment then centers its content so the icon and
+              // label stay vertically centered as one unit in both states.
               Positioned.fill(
                 child: Row(
                   children: List.generate(options.length, (i) {
                     final selected = i == selectedIndex;
                     final contentColor = selected
-                        ? (emphasized
-                              ? theme.colorScheme.onPrimary
-                              : theme.colorScheme.primary)
+                        ? theme.colorScheme.primary
                         : theme.colorScheme.onSurfaceVariant;
                     return Expanded(
                       child: Semantics(
@@ -168,7 +161,7 @@ class _SegmentedControl extends StatelessWidget {
                               children: [
                                 Icon(
                                   options[i].icon,
-                                  size: 17,
+                                  size: iconSize,
                                   color: contentColor,
                                 ),
                                 const SizedBox(width: AppSpacing.sm),
@@ -180,11 +173,11 @@ class _SegmentedControl extends StatelessWidget {
                                       maxLines: 1,
                                       style: TextStyle(
                                         fontFamily: 'Manrope',
-                                        fontSize: emphasized ? 14 : 13,
+                                        fontSize: labelSize,
                                         height: 1.2,
                                         fontWeight: selected
                                             ? FontWeight.w700
-                                            : FontWeight.w600,
+                                            : FontWeight.w500,
                                         color: contentColor,
                                       ),
                                     ),

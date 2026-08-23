@@ -6,11 +6,10 @@ import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/color_presets.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/accessibility_helper.dart';
-import '../../../../core/widgets/brand_chip.dart';
 import '../../../../core/widgets/section_label.dart';
 import '../providers/gst_calculator_notifier.dart';
 
-/// Quick action amount chips to add to the current amount.
+/// Quick amounts to add to the current amount.
 const List<double> _quickAmounts = [100, 500, 1000, 5000];
 
 /// The hero amount input — the single most important control on the screen.
@@ -52,6 +51,15 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
     if (mounted && _focused != widget.focusNode.hasFocus) {
       setState(() => _focused = widget.focusNode.hasFocus);
     }
+  }
+
+  void _quickAdd(double amount) {
+    A11y.tap();
+    ref.read(gstCalculatorProvider.notifier).quickAddAmount(amount);
+    widget.controller.text = ref.read(gstCalculatorProvider).amountText;
+    widget.controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: widget.controller.text.length),
+    );
   }
 
   @override
@@ -168,23 +176,16 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
             },
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.xs),
 
-        // Quick action chips — a deliberate 2×2 grid: every pill shares one
-        // geometry, both rows are balanced edge to edge, and the layout reads
-        // as intentional instead of an accidental wrap.
-        Column(
+        // Quick amounts — one deliberate row of four plain text actions.
+        // No pill chrome: they are suggestions under the field, so they read
+        // as links, not as another set of buttons competing with the input.
+        Row(
           children: [
-            for (var row = 0; row < _quickAmounts.length; row += 2) ...[
-              if (row > 0) const SizedBox(height: AppSpacing.sm),
-              Row(
-                children: [
-                  for (var i = row; i < row + 2; i++) ...[
-                    if (i > row) const SizedBox(width: AppSpacing.sm),
-                    Expanded(child: _buildQuickChip(_quickAmounts[i])),
-                  ],
-                ],
-              ),
+            for (var i = 0; i < _quickAmounts.length; i++) ...[
+              if (i > 0) const SizedBox(width: AppSpacing.xs),
+              Expanded(child: _buildQuickAction(_quickAmounts[i])),
             ],
           ],
         ),
@@ -192,25 +193,48 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
     );
   }
 
-  Widget _buildQuickChip(double amount) {
-    return BrandChip(
-      label: _quickLabel(amount),
-      icon: Icons.add_rounded,
-      tinted: true,
-      semanticsLabel: 'Add ${_quickLabel(amount)} to amount',
-      onTap: () {
-        A11y.tap();
-        ref.read(gstCalculatorProvider.notifier).quickAddAmount(amount);
-        widget.controller.text = ref.read(gstCalculatorProvider).amountText;
-        widget.controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: widget.controller.text.length),
-        );
-      },
+  Widget _buildQuickAction(double amount) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    return Semantics(
+      label: 'Add ${_quickLabel(amount)} to amount',
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => _quickAdd(amount),
+        child: SizedBox(
+          height: 44,
+          child: Center(
+            // Scale the label down (never up) when large system fonts would
+            // crowd the row — the four actions stay on one line.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                _quickLabel(amount),
+                maxLines: 1,
+                style: TextStyle(
+                  fontFamily: 'Manrope',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: primary,
+                  fontVariations: const [FontVariation('wght', 600)],
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
+  /// 100 → '₹100', 500 → '₹500', 1000 → '₹1,000', 5000 → '₹5,000'.
   static String _quickLabel(double amount) {
-    // 100 → '+₹100', 500 → '+₹500', 1000 → '+₹1000', 5000 → '+₹5000'.
-    return '+₹${amount ~/ 100 >= 1 ? '${amount ~/ 100}00' : amount.toString()}';
+    final whole = amount.round().toString();
+    if (amount >= 1000) {
+      return '₹${whole.substring(0, whole.length - 3)},'
+          '${whole.substring(whole.length - 3)}';
+    }
+    return '₹$whole';
   }
 }

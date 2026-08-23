@@ -41,7 +41,7 @@ class AppHeader extends StatelessWidget {
         : BrandColors.textPrimaryLight;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, 10, AppSpacing.md, 6),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, 8, AppSpacing.md, 4),
       child: Row(
         children: [
           if (leading != null) ...[
@@ -62,9 +62,9 @@ class AppHeader extends StatelessWidget {
                         // the same strong, confident weight as the icon.
                         ? TextStyle(
                           fontFamily: 'Manrope',
-                          fontSize: 30,
+                          fontSize: 26,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: -0.6,
+                          letterSpacing: -0.5,
                           color: titleColor,
                           fontVariations: const [FontVariation('wght', 800)],
                         )

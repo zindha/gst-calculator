@@ -24,7 +24,15 @@ ThemeData buildLightTheme() {
     useMaterial3: true,
     colorScheme: colorScheme,
     brightness: Brightness.light,
+    // One deliberate family everywhere: Manrope is the theme default, so
+    // unqualified text styles (dialogs, sheets, buttons) inherit it instead
+    // of silently falling back to the platform font.
+    fontFamily: 'Manrope',
     scaffoldBackgroundColor: BrandColors.surfaceLight,
+    // Classic Material ripple, not the M3 InkSparkle: a restrained, uniform
+    // press feedback that fits the utility look and has no shader
+    // dependency.
+    splashFactory: InkRipple.splashFactory,
     textTheme: _buildTextTheme(Brightness.light),
     appBarTheme: AppBarTheme(
       centerTitle: false,
@@ -45,14 +53,6 @@ ThemeData buildLightTheme() {
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
-    ),
-    cardTheme: CardThemeData(
-      elevation: 0,
-      color: Colors.white,
-      surfaceTintColor: Colors.transparent,
-      shadowColor: const Color(0x1A5B4636),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      clipBehavior: Clip.antiAlias,
     ),
     dividerTheme: DividerThemeData(
       color: colorScheme.outlineVariant.withValues(alpha: 0.6),
@@ -92,16 +92,6 @@ ThemeData buildLightTheme() {
       selectionColor: colorScheme.primary.withValues(alpha: 0.25),
       selectionHandleColor: colorScheme.primary,
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        textStyle: _manrope(weight: FontWeight.w700, size: 15),
-      ),
-    ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(0, 50),
@@ -127,27 +117,6 @@ ThemeData buildLightTheme() {
         foregroundColor: colorScheme.primary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         textStyle: _manrope(weight: FontWeight.w600, size: 14),
-      ),
-    ),
-    segmentedButtonTheme: SegmentedButtonThemeData(
-      style: SegmentedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: BrandColors.inputLight,
-        selectedBackgroundColor: colorScheme.primary,
-        selectedForegroundColor: colorScheme.onPrimary,
-        foregroundColor: colorScheme.onSurfaceVariant,
-        side: BorderSide(color: Colors.transparent),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        textStyle: _manrope(weight: FontWeight.w600, size: 13),
-      ),
-    ),
-    chipTheme: ChipThemeData(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      side: BorderSide(color: colorScheme.outlineVariant),
-      backgroundColor: BrandColors.inputLight,
-      labelStyle: _manrope(
-        color: colorScheme.onSurfaceVariant,
-        weight: FontWeight.w600,
       ),
     ),
     snackBarTheme: SnackBarThemeData(
@@ -188,24 +157,6 @@ ThemeData buildLightTheme() {
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),
-    navigationBarTheme: NavigationBarThemeData(
-      height: 68,
-      backgroundColor: Colors.white,
-      indicatorColor: colorScheme.primary.withValues(alpha: 0.14),
-      labelTextStyle: WidgetStatePropertyAll(
-        _manrope(
-          color: colorScheme.onSurface,
-          size: 12,
-          weight: FontWeight.w600,
-        ),
-      ),
-    ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
-      elevation: 0,
-      backgroundColor: colorScheme.primary,
-      foregroundColor: colorScheme.onPrimary,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-    ),
     extensions: const <ThemeExtension<dynamic>>[GSTColorScheme.light],
   );
 }
@@ -227,7 +178,9 @@ ThemeData buildDarkTheme() {
     useMaterial3: true,
     colorScheme: colorScheme,
     brightness: Brightness.dark,
+    fontFamily: 'Manrope',
     scaffoldBackgroundColor: BrandColors.surfaceDark,
+    splashFactory: InkRipple.splashFactory,
     textTheme: _buildTextTheme(Brightness.dark),
     appBarTheme: AppBarTheme(
       centerTitle: false,
@@ -248,14 +201,6 @@ ThemeData buildDarkTheme() {
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
-    ),
-    cardTheme: CardThemeData(
-      elevation: 0,
-      color: BrandColors.cardDark,
-      surfaceTintColor: Colors.transparent,
-      shadowColor: Colors.black.withValues(alpha: 0.4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      clipBehavior: Clip.antiAlias,
     ),
     dividerTheme: DividerThemeData(
       color: colorScheme.outlineVariant.withValues(alpha: 0.5),
@@ -295,16 +240,6 @@ ThemeData buildDarkTheme() {
       selectionColor: colorScheme.primary.withValues(alpha: 0.25),
       selectionHandleColor: colorScheme.primary,
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        textStyle: _manrope(weight: FontWeight.w700, size: 15),
-      ),
-    ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(0, 50),
@@ -330,27 +265,6 @@ ThemeData buildDarkTheme() {
         foregroundColor: colorScheme.primary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         textStyle: _manrope(weight: FontWeight.w600, size: 14),
-      ),
-    ),
-    segmentedButtonTheme: SegmentedButtonThemeData(
-      style: SegmentedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: BrandColors.inputDark,
-        selectedBackgroundColor: colorScheme.primary,
-        selectedForegroundColor: colorScheme.onPrimary,
-        foregroundColor: colorScheme.onSurfaceVariant,
-        side: BorderSide(color: Colors.transparent),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        textStyle: _manrope(weight: FontWeight.w600, size: 13),
-      ),
-    ),
-    chipTheme: ChipThemeData(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      side: BorderSide(color: colorScheme.outlineVariant),
-      backgroundColor: BrandColors.inputDark,
-      labelStyle: _manrope(
-        color: colorScheme.onSurfaceVariant,
-        weight: FontWeight.w600,
       ),
     ),
     snackBarTheme: SnackBarThemeData(
@@ -390,24 +304,6 @@ ThemeData buildDarkTheme() {
         size: 13,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-    ),
-    navigationBarTheme: NavigationBarThemeData(
-      height: 68,
-      backgroundColor: BrandColors.cardDark,
-      indicatorColor: colorScheme.primary.withValues(alpha: 0.18),
-      labelTextStyle: WidgetStatePropertyAll(
-        _manrope(
-          color: colorScheme.onSurface,
-          size: 12,
-          weight: FontWeight.w600,
-        ),
-      ),
-    ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
-      elevation: 0,
-      backgroundColor: colorScheme.primary,
-      foregroundColor: colorScheme.onPrimary,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
     ),
     extensions: const <ThemeExtension<dynamic>>[GSTColorScheme.dark],
   );

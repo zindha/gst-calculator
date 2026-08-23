@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gst_calculator/app.dart';
-import 'package:gst_calculator/core/theme/app_tokens.dart';
 import 'package:gst_calculator/core/theme/app_theme.dart';
 import 'package:gst_calculator/core/widgets/brand_chip.dart';
 import 'package:gst_calculator/features/calculator/presentation/widgets/calculation_mode_toggle.dart';
@@ -114,29 +113,19 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // The track is the segment's nearest Container ancestor that has the
-    // track padding (3) and the rounded input-background decoration.
-    Finder trackOf(String label) => find.ancestor(
-      of: find.text(label),
-      matching: find.byWidgetPredicate(
-        (w) =>
-            w is Container &&
-            w.padding == const EdgeInsets.all(3) &&
-            w.decoration is BoxDecoration &&
-            (w.decoration as BoxDecoration).borderRadius ==
-                BorderRadius.circular(AppRadius.md),
-      ),
-    );
+    // The first control is Add/Remove GST; the second is Intra/Inter-State.
+    final modeControl = find.byType(SegmentedControl).first;
+    final txControl = find.byType(SegmentedControl).at(1);
 
     // Calculation-mode control: both segments align on the same center and
-    // sit vertically centered inside the track.
-    final trackRect = tester.getRect(trackOf('Add GST'));
+    // sit vertically centered inside the control.
+    final modeRect = tester.getRect(modeControl);
     for (final label in ['Add GST', 'Remove GST']) {
       final c = tester.getCenter(find.text(label));
       expect(
         c.dy,
-        closeTo(trackRect.center.dy, 2.0),
-        reason: "'$label' must be vertically centered in its track",
+        closeTo(modeRect.center.dy, 2.0),
+        reason: "'$label' must be vertically centered in its control",
       );
     }
     expect(
@@ -146,10 +135,10 @@ void main() {
     );
 
     // Transaction control: icons differ but the label centers still match.
-    final txTrack = tester.getRect(trackOf('Intra-State'));
+    final txRect = tester.getRect(txControl);
     for (final label in ['Intra-State', 'Inter-State']) {
       final c = tester.getCenter(find.text(label));
-      expect(c.dy, closeTo(txTrack.center.dy, 2.0),
+      expect(c.dy, closeTo(txRect.center.dy, 2.0),
           reason: "'$label' must be vertically centered");
     }
 
@@ -189,22 +178,13 @@ void main() {
     // Tap the 'Remove GST' segment in the empty area near its bottom edge —
     // far away from the label, which sits centered. The whole segment must
     // be a valid touch target, not just the icon + text row.
-    final track = tester.getRect(
-      find.ancestor(
-        of: find.text('Add GST'),
-        matching: find.byWidgetPredicate(
-          (w) =>
-              w is Container &&
-              w.padding == const EdgeInsets.all(3) &&
-              w.decoration is BoxDecoration &&
-              (w.decoration as BoxDecoration).borderRadius ==
-                  BorderRadius.circular(AppRadius.md),
-        ),
-      ),
-    );
-    // Right half of the track = the 'Remove GST' segment; bottom edge is
+    final control = tester.getRect(find.byType(SegmentedControl).first);
+    // Right half of the control = the 'Remove GST' segment; bottom edge is
     // empty space, never the label.
-    final tapPoint = Offset(track.right - track.width * 0.25, track.bottom - 6);
+    final tapPoint = Offset(
+      control.right - control.width * 0.25,
+      control.bottom - 6,
+    );
     await tester.tapAt(tapPoint);
     await tester.pumpAndSettle();
 
@@ -217,7 +197,7 @@ void main() {
     expect(_captured, isEmpty);
   });
 
-  testWidgets('Quick-add amounts: deliberate 2×2 grid, identical geometry', (
+  testWidgets('Quick-add amounts: one deliberate row of four text actions', (
     tester,
   ) async {
     _usePhoneView(tester);
@@ -225,37 +205,27 @@ void main() {
     _installCapture();
     await _finishOnboarding(tester);
 
-    // All four quick-add pills exist.
-    for (final label in ['+₹100', '+₹500', '+₹1000', '+₹5000']) {
-      expect(find.text(label), findsOneWidget, reason: 'missing $label pill');
+    // All four quick-add actions exist with Indian-formatted labels.
+    for (final label in ['₹100', '₹500', '₹1,000', '₹5,000']) {
+      expect(find.text(label), findsOneWidget, reason: 'missing $label');
     }
 
-    // Every pill shares identical dimensions — the second row must be the
-    // same component, not an accidental different-sized wrap.
-    final sizes = <Size>[];
-    for (final label in ['+₹100', '+₹500', '+₹1000', '+₹5000']) {
-      sizes.add(tester.getSize(_chipOf(label)));
-    }
-    for (final s in sizes.skip(1)) {
-      expect(s.height, closeTo(sizes.first.height, 0.01),
-          reason: 'all quick-add pills must share one height');
-      expect(s.width, closeTo(sizes.first.width, 0.01),
-          reason: 'all quick-add pills must share one width');
+    // One intentional row: all four share the same vertical center and a
+    // near-identical top edge (labels may differ by a fraction of a pixel
+    // when a wide label is scale-guarded, but a wrapped row would differ by
+    // the full row height).
+    final rowCenter = tester.getCenter(find.text('₹100')).dy;
+    final rowTop = tester.getTopLeft(find.text('₹100')).dy;
+    for (final label in ['₹500', '₹1,000', '₹5,000']) {
+      expect(tester.getCenter(find.text(label)).dy,
+          closeTo(rowCenter, 0.5),
+          reason: '$label must align on the same row as ₹100');
+      expect(tester.getTopLeft(find.text(label)).dy, closeTo(rowTop, 2.0),
+          reason: '$label must sit on the same row as ₹100');
     }
 
-    // Two intentional rows: the first row shares a top edge, the second row
-    // sits below it on its own edge.
-    final row1Top = tester.getTopLeft(find.text('+₹100')).dy;
-    final row2Top = tester.getTopLeft(find.text('+₹1000')).dy;
-    expect(tester.getTopLeft(find.text('+₹500')).dy, closeTo(row1Top, 0.5),
-        reason: '+₹500 must sit on the same row as +₹100');
-    expect(tester.getTopLeft(find.text('+₹5000')).dy, closeTo(row2Top, 0.5),
-        reason: '+₹5000 must sit on the same row as +₹1000');
-    expect(row2Top, greaterThan(row1Top),
-        reason: 'second quick-add row must sit below the first');
-
-    // Tapping a pill adds to the amount (100 + 18% exclusive = ₹118 total).
-    await tester.tap(find.text('+₹100'));
+    // Tapping an action adds to the amount (100 + 18% exclusive = ₹118 total).
+    await tester.tap(find.text('₹100'));
     await tester.pumpAndSettle();
     expect(find.text('₹118.00'), findsOneWidget);
     expect(find.text('₹100.00'), findsOneWidget); // base row

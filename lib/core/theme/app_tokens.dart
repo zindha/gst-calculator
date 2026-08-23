@@ -25,10 +25,11 @@ abstract final class AppSpacing {
   /// 24 — section separation.
   static const double xxl = 24;
 
-  /// 28 — comfortable rhythm between major calculator sections (the gap
+  /// 24 — comfortable rhythm between major calculator sections (the gap
   /// between AMOUNT → CALCULATION → GST RATE → RESULT reads as deliberate
-  /// because every section uses the same value).
-  static const double section = 28;
+  /// because every section uses the same value). Tight enough that the
+  /// primary task — entering an amount — is reached without scrolling.
+  static const double section = 24;
 
   /// 32 — major section separation / generous padding.
   static const double xxxl = 32;
@@ -46,12 +47,6 @@ abstract final class AppRadius {
 
   /// 20 — cards and input surfaces.
   static const double lg = 20;
-
-  /// 24 — hero surfaces (result card, dialog).
-  static const double xl = 24;
-
-  /// Fully rounded — pills, segmented track ends.
-  static const double pill = 999;
 }
 
 /// Centralized dimensions (touch targets, icon sizes, control heights).
@@ -64,15 +59,9 @@ abstract final class AppDimens {
   /// Standard action icon size.
   static const double icon = 24;
 
-  /// Height of primary segmented controls (Add/Remove GST).
-  static const double control = 54;
-
-  /// Height of compact secondary controls (transaction type).
-  static const double controlCompact = 44;
-
-  /// Target height of brand pills (rate slabs, quick amounts, custom).
-  /// Pills stay content-driven so they grow gracefully with text scaling;
-  /// this documents the default pill height at the standard text scale.
+  /// Target height of brand pills (rate slabs, custom). Pills stay
+  /// content-driven so they grow gracefully with text scaling; this documents
+  /// the default pill height at the standard text scale.
   static const double chip = 40;
 
   /// Maximum content width on large screens (tablet/desktop).

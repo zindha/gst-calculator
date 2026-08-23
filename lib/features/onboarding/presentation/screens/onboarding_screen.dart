@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_tokens.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
 
 /// A single onboarding slide definition.
@@ -22,19 +23,19 @@ const List<_OnboardingSlide> _slides = [
     icon: Icons.calculate_rounded,
     title: 'Quick GST Calculations',
     description:
-        'Calculate GST instantly with live updates. Switch between Exclusive (+GST) and Inclusive (-GST) modes with ease.',
+        'Calculate GST instantly with live updates. Switch between Exclusive (+GST) and Inclusive (-GST) modes.',
   ),
   _OnboardingSlide(
     icon: Icons.swap_horiz_rounded,
     title: 'Reverse GST & History',
     description:
-        'Reverse-calculate the base price from the gross total. All calculations are automatically saved for future reference.',
+        'Reverse-calculate the base price from a gross total. Every calculation is saved to your history automatically.',
   ),
   _OnboardingSlide(
     icon: Icons.palette_rounded,
-    title: 'Tailored Settings & Themes',
+    title: 'Settings & Themes',
     description:
-        'Customise your experience — choose a theme, set your default tax rate, and more.',
+        'Pick a theme and set your default rate, tax type, and transaction type.',
   ),
 ];
 
@@ -116,28 +117,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  AnimatedContainer(
-                                    duration: slideDuration,
-                                    width: 120,
-                                    height: 120,
-                                    decoration: BoxDecoration(
-                                      color: primary.withValues(alpha: 0.08),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      slide.icon,
-                                      size: 54,
-                                      color: primary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 40),
+                                  // A quiet icon accent — no tinted circle, no
+                                  // illustration. The text carries the slide.
+                                  Icon(slide.icon, size: 32, color: primary),
+                                  const SizedBox(height: AppSpacing.lg),
                                   Text(
                                     slide.title,
                                     textAlign: TextAlign.center,
                                     style: theme.textTheme.headlineSmall
                                         ?.copyWith(fontWeight: FontWeight.w700),
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: AppSpacing.sm),
                                   Text(
                                     slide.description,
                                     textAlign: TextAlign.center,

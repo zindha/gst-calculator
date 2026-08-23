@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_tokens.dart';
-import '../theme/theme_extensions.dart';
 
-/// A pressable brand chip with one consistent recipe for icon/label
-/// alignment, radii, spacing and selected state.
+/// A pressable brand chip for discrete choices such as the GST rate slabs.
 ///
-/// Used by the GST rate slabs and the quick amount actions so every pill on
-/// the calculator screen reads as part of one intentional system:
+/// One consistent recipe for icon/label alignment, radii, spacing and
+/// selected state:
 /// - subtle radius (never a giant capsule)
-/// - quiet input surface + thin border when unselected
+/// - transparent fill + thin border when unselected, so only the active
+///   choice carries a surface (the page background shows through)
 /// - solid brand-primary fill + high-contrast content when selected
 /// - a small 0.97 press scale (120ms) as the only press feedback
 class BrandChip extends StatefulWidget {
-  /// Chip label, e.g. `18%` or `+₹100`.
+  /// Chip label, e.g. `18%`.
   final String label;
 
-  /// Optional leading icon (check mark when selected, `+` for quick amounts).
+  /// Optional leading icon (check mark when selected).
   final IconData? icon;
 
   /// Selected chips use the solid brand-primary treatment.
   final bool selected;
-
-  /// Secondary chips (quick amounts) tint their content with the brand
-  /// primary instead of plain on-surface text.
-  final bool tinted;
 
   /// Overrides the default `Semantics` label.
   final String? semanticsLabel;
@@ -36,7 +31,6 @@ class BrandChip extends StatefulWidget {
     required this.label,
     this.icon,
     this.selected = false,
-    this.tinted = false,
     this.semanticsLabel,
     this.onTap,
   });
@@ -54,13 +48,12 @@ class _BrandChipState extends State<BrandChip> {
     final selected = widget.selected;
     final duration = appMotion(context, milliseconds: 120);
 
-    final fill = selected
-        ? theme.colorScheme.primary
-        : theme.gstColors.inputBackground;
+    // Unselected chips are transparent: the page shows through and the thin
+    // outline alone marks the option, so unselected states stay quiet and
+    // only the active choice earns a solid surface.
+    final fill = selected ? theme.colorScheme.primary : Colors.transparent;
     final content = selected
         ? theme.colorScheme.onPrimary
-        : widget.tinted
-        ? theme.colorScheme.primary
         : theme.colorScheme.onSurface;
     final border = selected
         ? fill
@@ -107,9 +100,9 @@ class _BrandChipState extends State<BrandChip> {
               border: Border.all(color: border, width: 1),
             ),
             child: Row(
-              // min size keeps pills content-hugging inside a Wrap; under a
-              // tight width (the 2×2 quick-amount grid) the row stretches and
-              // [center] keeps the icon + label centered as one unit.
+              // min size keeps pills content-hugging inside a Wrap so every
+              // rate slab hugs its content; [center] keeps the icon + label
+              // centered as one unit.
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

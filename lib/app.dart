@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
-import 'core/theme/color_presets.dart';
 import 'core/theme/theme_controller.dart';
 import 'core/utils/accessibility_helper.dart';
 import 'features/calculator/presentation/screens/gst_calculator_screen.dart';
@@ -40,7 +39,7 @@ class _AppEntry extends ConsumerWidget {
   }
 }
 
-/// Bottom-navigation shell with 3 tabs, styled as a floating ledger dock.
+/// Bottom-navigation shell with 3 tabs.
 class _MainShell extends ConsumerStatefulWidget {
   const _MainShell();
 
@@ -51,18 +50,18 @@ class _MainShell extends ConsumerStatefulWidget {
 class _MainShellState extends ConsumerState<_MainShell> {
   int _selectedIndex = 0;
 
-  static const _tabs = <_DockTab>[
-    _DockTab(
+  static const _tabs = <_NavTab>[
+    _NavTab(
       label: 'Calculate',
       icon: Icons.calculate_outlined,
       selectedIcon: Icons.calculate_rounded,
     ),
-    _DockTab(
+    _NavTab(
       label: 'History',
       icon: Icons.history_outlined,
       selectedIcon: Icons.history_rounded,
     ),
-    _DockTab(
+    _NavTab(
       label: 'Settings',
       icon: Icons.settings_outlined,
       selectedIcon: Icons.settings_rounded,
@@ -79,7 +78,7 @@ class _MainShellState extends ConsumerState<_MainShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _screens),
-      bottomNavigationBar: _LedgerDock(
+      bottomNavigationBar: _BottomNavBar(
         tabs: _tabs,
         selectedIndex: _selectedIndex,
         onSelected: (i) {
@@ -91,29 +90,31 @@ class _MainShellState extends ConsumerState<_MainShell> {
   }
 }
 
-class _DockTab {
+class _NavTab {
   final String label;
   final IconData icon;
   final IconData selectedIcon;
 
-  const _DockTab({
+  const _NavTab({
     required this.label,
     required this.icon,
     required this.selectedIcon,
   });
 }
 
-/// A floating bottom navigation dock.
+/// A flat bottom navigation bar.
 ///
-/// Every destination keeps a stable icon + label column (no layout jumps on
-/// selection); the selected destination is marked with a tonal pill behind
-/// the icon, a filled icon and a bold label — never color alone.
-class _LedgerDock extends StatelessWidget {
-  final List<_DockTab> tabs;
+/// Deliberately quiet: no floating dock, no shadow, no pill indicator. A
+/// single hairline divider separates it from the page, and the selected
+/// destination is marked by a filled icon, the brand colour and a bolder
+/// label — never a container. Every destination keeps a stable icon + label
+/// column so nothing shifts on selection.
+class _BottomNavBar extends StatelessWidget {
+  final List<_NavTab> tabs;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
-  const _LedgerDock({
+  const _BottomNavBar({
     required this.tabs,
     required this.selectedIndex,
     required this.onSelected,
@@ -123,32 +124,22 @@ class _LedgerDock extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-    final duration =
-        MediaQuery.disableAnimationsOf(context)
-            ? Duration.zero
-            : const Duration(milliseconds: 220);
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       decoration: BoxDecoration(
-        color: isDark ? BrandColors.cardDark : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
+        // The bar is the page itself, not a floating surface: same background
+        // as the screens, with only a hairline to mark the boundary.
+        color: theme.scaffoldBackgroundColor,
+        border: Border(
+          top: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.55),
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 58,
+          height: 54,
           child: Row(
             children: List.generate(tabs.length, (i) {
               final tab = tabs[i];
@@ -164,36 +155,20 @@ class _LedgerDock extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Icon with tonal pill behind it when selected.
-                        AnimatedContainer(
-                          duration: duration,
-                          curve: Curves.easeOutCubic,
-                          width: 42,
-                          height: 28,
-                          decoration: BoxDecoration(
-                            color:
-                                selected
-                                    ? colorScheme.primary.withValues(
-                                      alpha: isDark ? 0.22 : 0.12,
-                                    )
-                                    : Colors.transparent,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Icon(
-                            selected ? tab.selectedIcon : tab.icon,
-                            size: 22,
-                            color:
-                                selected
-                                    ? colorScheme.primary
-                                    : colorScheme.onSurfaceVariant,
-                          ),
+                        Icon(
+                          selected ? tab.selectedIcon : tab.icon,
+                          size: 20,
+                          color:
+                              selected
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurfaceVariant,
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 2),
                         // Scale the label down (never up, never clipped) when
                         // large system fonts would overflow the fixed-height
-                        // dock. Single-word labels cannot wrap, so this is the
+                        // bar. Single-word labels cannot wrap, so this is the
                         // smallest guard that keeps them fully visible at every
-                        // text scale while leaving the 58px dock unchanged.
+                        // text scale.
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
@@ -205,7 +180,7 @@ class _LedgerDock extends StatelessWidget {
                                   selected
                                       ? FontWeight.w700
                                       : FontWeight.w500,
-                              fontSize: 11,
+                              fontSize: 10.5,
                               color:
                                   selected
                                       ? colorScheme.primary
