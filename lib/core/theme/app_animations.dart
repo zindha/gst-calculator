@@ -96,7 +96,7 @@ class _SpringEntranceState extends State<SpringEntrance>
       _controller.value = 1.0;
     } else {
       // Stagger: each child waits `index * delay` before springing in.
-      Future.delayed(widget.index * widget.delay, () {
+      Future.delayed(widget.delay * widget.index, () {
         if (mounted) {
           // Drive with a real spring: starts at 0, springs to 1 with
           // zero initial velocity. The spring overshoots slightly and
@@ -165,7 +165,6 @@ class SpringScale extends StatefulWidget {
 class _SpringScaleState extends State<SpringScale>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  double _target = 1.0;
 
   @override
   void initState() {
@@ -174,7 +173,6 @@ class _SpringScaleState extends State<SpringScale>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    _target = widget.pressed ? widget.pressedScale : 1.0;
   }
 
   @override
@@ -188,7 +186,6 @@ class _SpringScaleState extends State<SpringScale>
         velocity: _controller.velocity,
       );
       _controller.animateWith(sim);
-      _target = newTarget;
     }
   }
 

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/gst_rates.dart';
 import '../../../../core/theme/app_tokens.dart';
-import '../../../../core/theme/app_animations.dart';
 import '../../../../core/utils/rate_formatter.dart';
 import '../../../../core/widgets/brand_chip.dart';
 import '../../../../core/widgets/section_label.dart';
