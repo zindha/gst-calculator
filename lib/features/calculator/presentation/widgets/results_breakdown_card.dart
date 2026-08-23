@@ -37,20 +37,8 @@ class ResultsBreakdownCard extends ConsumerWidget {
     final hasResult = result != null && state.amountText.isNotEmpty;
     final transition = appMotion(context, milliseconds: 220);
 
-    return AnimatedSwitcher(
+    return _SpringSwitcher(
       duration: transition,
-      switchInCurve: Curves.easeOutCubic,
-      switchOutCurve: Curves.easeInCubic,
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, 0.06),
-            end: Offset.zero,
-          ).animate(animation),
-          child: child,
-        ),
-      ),
       child: hasResult
           ? _buildResultSection(context, state, result)
           : _buildEmptyState(theme),
@@ -309,6 +297,92 @@ class _BreakdownRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// An animated switcher that uses spring physics for the transition.
+///
+/// When the child changes (empty → result), the new child springs into
+/// place with a natural overshoot instead of a mathematical easeOutCubic.
+class _SpringSwitcher extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+
+  const _SpringSwitcher({
+    required this.child,
+    required this.duration,
+  });
+
+  @override
+  State<_SpringSwitcher> createState() => _SpringSwitcherState();
+}
+
+class _SpringSwitcherState extends State<_SpringSwitcher>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  Widget? _oldChild;
+  Widget? _newChild;
+  bool _isAnimating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+    _newChild = widget.child;
+  }
+
+  @override
+  void didUpdateWidget(_SpringSwitcher oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.child != widget.child && !_isAnimating) {
+      _isAnimating = true;
+      _oldChild = _newChild;
+      _newChild = widget.child;
+      _controller.forward(from: 0).then((_) {
+        _isAnimating = false;
+        _oldChild = null;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final t = _controller.value;
+        // Spring-like easing: fast entry, gentle settle.
+        final easedT = Curves.easeOutCubic.transform(t);
+
+        return Stack(
+          children: [
+            if (_oldChild != null && _isAnimating)
+              IgnorePointer(
+                child: Opacity(
+                  opacity: 1 - easedT,
+                  child: _oldChild,
+                ),
+              ),
+            Opacity(
+              opacity: _isAnimating ? easedT : 1,
+              child: Transform.translate(
+                offset: Offset(0, _isAnimating ? (1 - easedT) * 6 : 0),
+                child: _newChild,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

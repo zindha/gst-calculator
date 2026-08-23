@@ -35,13 +35,46 @@ class _AppEntry extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     if (!settings.onboardingDone) return const OnboardingScreen();
-    return const _MainShell();
+
+    // Parse deep link query parameters from the initial route.
+    final initialAmount = _parseInitialAmount();
+    final initialRate = _parseInitialRate();
+    return _MainShell(
+      initialAmount: initialAmount,
+      initialRate: initialRate,
+    );
+  }
+
+  /// Parses the `amount` query parameter from the app's initial URI.
+  double? _parseInitialAmount() {
+    final uri = Uri.base;
+    final amountStr = uri.queryParameters['amount'];
+    if (amountStr == null) return null;
+    final amount = double.tryParse(amountStr);
+    if (amount == null || amount <= 0) return null;
+    return amount;
+  }
+
+  /// Parses the `rate` query parameter from the app's initial URI.
+  double? _parseInitialRate() {
+    final uri = Uri.base;
+    final rateStr = uri.queryParameters['rate'];
+    if (rateStr == null) return null;
+    final rate = double.tryParse(rateStr);
+    if (rate == null || rate < 0 || rate > 100) return null;
+    return rate;
   }
 }
 
 /// Bottom-navigation shell with 3 tabs.
 class _MainShell extends ConsumerStatefulWidget {
-  const _MainShell();
+  final double? initialAmount;
+  final double? initialRate;
+
+  const _MainShell({
+    this.initialAmount,
+    this.initialRate,
+  });
 
   @override
   ConsumerState<_MainShell> createState() => _MainShellState();
@@ -68,16 +101,27 @@ class _MainShellState extends ConsumerState<_MainShell> {
     ),
   ];
 
-  static const _screens = <Widget>[
-    GstCalculatorScreen(),
-    HistoryScreen(),
-    SettingsScreen(),
-  ];
+  // Screens are built in build() to pass deep link params.
+  Widget _buildCalculatorScreen() => GstCalculatorScreen(
+    initialAmount: widget.initialAmount,
+    initialRate: widget.initialRate,
+  );
+
+  Widget _buildHistoryScreen() => const HistoryScreen();
+
+  Widget _buildSettingsScreen() => const SettingsScreen();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _screens),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          _buildCalculatorScreen(),
+          _buildHistoryScreen(),
+          _buildSettingsScreen(),
+        ],
+      ),
       bottomNavigationBar: _BottomNavBar(
         tabs: _tabs,
         selectedIndex: _selectedIndex,

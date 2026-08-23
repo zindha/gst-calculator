@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_tokens.dart';
+import '../theme/app_animations.dart';
 
 /// A pressable brand chip for discrete choices such as the GST rate slabs.
 ///
@@ -39,8 +40,57 @@ class BrandChip extends StatefulWidget {
   State<BrandChip> createState() => _BrandChipState();
 }
 
-class _BrandChipState extends State<BrandChip> {
+class _BrandChipState extends State<BrandChip>
+    with SingleTickerProviderStateMixin {
   bool _pressed = false;
+  late final AnimationController _pressController;
+  late Animation<double> _pressAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _pressAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
+      CurvedAnimation(parent: _pressController, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pressController.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails _) {
+    setState(() => _pressed = true);
+    // Spring into the pressed state: low velocity gives a soft bounce.
+    final simulation = AppSpring.gentle.toSimulation(from: 1.0, to: 0.97);
+    _pressController.animateWith(simulation);
+  }
+
+  void _onTapUp(TapUpDetails _) {
+    setState(() => _pressed = false);
+    // Spring back: reversed spring with the release velocity.
+    final simulation = AppSpring.gentle.toSimulation(
+      from: _pressController.value,
+      to: 1.0,
+      velocity: _pressController.velocity,
+    );
+    _pressController.animateWith(simulation);
+  }
+
+  void _onTapCancel() {
+    setState(() => _pressed = false);
+    final simulation = AppSpring.gentle.toSimulation(
+      from: _pressController.value,
+      to: 1.0,
+      velocity: _pressController.velocity,
+    );
+    _pressController.animateWith(simulation);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,14 +117,18 @@ class _BrandChipState extends State<BrandChip> {
       selected: selected,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapCancel: () => setState(() => _pressed = false),
-        onTapUp: (_) => setState(() => _pressed = false),
+        onTapDown: _onTapDown,
+        onTapCancel: _onTapCancel,
+        onTapUp: _onTapUp,
         onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: _pressed ? 0.97 : 1.0,
-          duration: duration,
-          curve: Curves.easeOut,
+        child: AnimatedBuilder(
+          animation: _pressAnimation,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _pressAnimation.value,
+              child: child,
+            );
+          },
           child: AnimatedContainer(
             duration: duration,
             curve: Curves.easeOutCubic,

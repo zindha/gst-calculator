@@ -30,52 +30,15 @@ class _GstSlabSelectorState extends ConsumerState<GstSlabSelector> {
     _customRateController.text = '';
     showDialog(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('Custom GST Rate'),
-            content: TextField(
-              controller: _customRateController,
-              autofocus: true,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Rate (%)',
-                hintText: 'e.g., 0.25, 1.5, 40',
-                suffixText: '%',
-                border: OutlineInputBorder(),
-              ),
-              onSubmitted: (_) => _applyCustomRate(ctx),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Cancel'),
-              ),
-              FilledButton(
-                onPressed: () => _applyCustomRate(ctx),
-                child: const Text('Apply'),
-              ),
-            ],
-          ),
+      builder: (ctx) => _CustomRateDialog(
+        controller: _customRateController,
+        onApply: (rate) {
+          HapticFeedback.selectionClick();
+          ref.read(gstCalculatorProvider.notifier).setCustomSlab(rate);
+          Navigator.of(ctx).pop();
+        },
+      ),
     );
-  }
-
-  void _applyCustomRate(BuildContext dialogContext) {
-    final text = _customRateController.text.trim();
-    final rate = double.tryParse(text);
-    if (rate == null || rate < 0 || rate > 100) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid rate between 0 and 100'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-    HapticFeedback.selectionClick();
-    ref.read(gstCalculatorProvider.notifier).setCustomSlab(rate);
-    Navigator.of(dialogContext).pop();
   }
 
   @override
@@ -127,6 +90,99 @@ class _GstSlabSelectorState extends ConsumerState<GstSlabSelector> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// A dialog for entering a custom GST rate with inline validation.
+///
+/// Shows real-time error text below the field instead of a SnackBar,
+/// following the Forms & Feedback UX guideline: "Error near field, not at top."
+class _CustomRateDialog extends StatefulWidget {
+  final TextEditingController controller;
+  final ValueChanged<double> onApply;
+
+  const _CustomRateDialog({
+    required this.controller,
+    required this.onApply,
+  });
+
+  @override
+  State<_CustomRateDialog> createState() => _CustomRateDialogState();
+}
+
+class _CustomRateDialogState extends State<_CustomRateDialog> {
+  String? _errorText;
+
+  void _validate() {
+    final text = widget.controller.text.trim();
+    if (text.isEmpty) {
+      setState(() => _errorText = null);
+      return;
+    }
+    final rate = double.tryParse(text);
+    if (rate == null) {
+      setState(() => _errorText = 'Enter a valid number');
+    } else if (rate < 0 || rate > 100) {
+      setState(() => _errorText = 'Rate must be between 0 and 100');
+    } else {
+      setState(() => _errorText = null);
+    }
+  }
+
+  void _apply() {
+    final text = widget.controller.text.trim();
+    final rate = double.tryParse(text);
+    if (rate == null || rate < 0 || rate > 100) {
+      _validate();
+      return;
+    }
+    widget.onApply(rate);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Custom GST Rate'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: widget.controller,
+            autofocus: true,
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal: true,
+            ),
+            onChanged: (_) => _validate(),
+            decoration: InputDecoration(
+              labelText: 'Rate (%)',
+              hintText: 'e.g., 0.25, 1.5, 40',
+              suffixText: '%',
+              border: const OutlineInputBorder(),
+              errorText: _errorText,
+            ),
+            onSubmitted: (_) => _apply(),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Enter a rate between 0% and 100%',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _apply,
+          child: const Text('Apply'),
+        ),
+      ],
     );
   }
 }
