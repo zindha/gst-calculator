@@ -38,21 +38,24 @@ class _AppEntry extends ConsumerStatefulWidget {
 
 class _AppEntryState extends ConsumerState<_AppEntry> {
   DeepLinkParams? _deepLink;
-  bool _loaded = false;
 
   @override
   void initState() {
     super.initState();
+    // Fire-and-forget: load deep link params in the background.
+    // Never block the UI — if the MethodChannel call hangs or fails,
+    // the app still renders with null params (no deep link).
     _loadDeepLink();
   }
 
   Future<void> _loadDeepLink() async {
-    final params = await DeepLinkHandler.parseInitial();
-    if (mounted) {
-      setState(() {
-        _deepLink = params;
-        _loaded = true;
-      });
+    try {
+      final params = await DeepLinkHandler.parseInitial();
+      if (mounted && params.hasAny) {
+        setState(() => _deepLink = params);
+      }
+    } catch (_) {
+      // Ignore — deep link is optional, app works without it.
     }
   }
 
@@ -60,7 +63,6 @@ class _AppEntryState extends ConsumerState<_AppEntry> {
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     if (!settings.onboardingDone) return const OnboardingScreen();
-    if (!_loaded) return const SizedBox.shrink();
 
     return _MainShell(
       initialAmount: _deepLink?.amount,

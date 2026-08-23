@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/services.dart';
@@ -36,11 +37,14 @@ class DeepLinkHandler {
   }
 
   /// Parses deep link from native platform via MethodChannel.
+  ///
+  /// Times out after 2 seconds so the app never hangs waiting for a
+  /// platform handler that may not be registered yet.
   static Future<DeepLinkParams> _parseNative() async {
     try {
-      final result = await _channel.invokeMapMethod<String, dynamic>(
-        'getInitialLink',
-      );
+      final result = await _channel
+          .invokeMapMethod<String, dynamic>('getInitialLink')
+          .timeout(const Duration(seconds: 2));
       if (result == null) return DeepLinkParams.empty;
 
       final amount = _parseDouble(result['amount']?.toString());
@@ -50,6 +54,8 @@ class DeepLinkHandler {
         rate: rate != null && rate >= 0 && rate <= 100 ? rate : null,
       );
     } on PlatformException {
+      return DeepLinkParams.empty;
+    } on TimeoutException {
       return DeepLinkParams.empty;
     }
   }
