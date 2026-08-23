@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/gst_rates.dart';
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/app_animations.dart';
 import '../../../../core/utils/rate_formatter.dart';
 import '../../../../core/widgets/brand_chip.dart';
 import '../../../../core/widgets/section_label.dart';
@@ -111,8 +112,36 @@ class _CustomRateDialog extends StatefulWidget {
   State<_CustomRateDialog> createState() => _CustomRateDialogState();
 }
 
-class _CustomRateDialogState extends State<_CustomRateDialog> {
+class _CustomRateDialogState extends State<_CustomRateDialog>
+    with SingleTickerProviderStateMixin {
   String? _errorText;
+  late final AnimationController _shakeController;
+  late Animation<double> _shakeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _shakeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _shakeController, curve: Curves.elasticOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _shakeController.dispose();
+    super.dispose();
+  }
+
+  void _triggerShake() {
+    // Spring-driven shake: the spring overshoots and decays, creating
+    // a natural left-right vibration that settles.
+    _shakeController.forward(from: 0);
+    HapticFeedback.mediumImpact();
+  }
 
   void _validate() {
     final text = widget.controller.text.trim();
@@ -135,6 +164,7 @@ class _CustomRateDialogState extends State<_CustomRateDialog> {
     final rate = double.tryParse(text);
     if (rate == null || rate < 0 || rate > 100) {
       _validate();
+      _triggerShake();
       return;
     }
     widget.onApply(rate);
@@ -144,34 +174,51 @@ class _CustomRateDialogState extends State<_CustomRateDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Custom GST Rate'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: widget.controller,
-            autofocus: true,
-            keyboardType: const TextInputType.numberWithOptions(
-              decimal: true,
+      content: AnimatedBuilder(
+        animation: _shakeAnimation,
+        builder: (context, child) {
+          // Map the spring value to a horizontal offset: the spring
+          // overshoots past 1.0, creating a natural decaying shake.
+          final shakeOffset =
+              _shakeAnimation.value == 0
+                  ? 0.0
+                  : (1 - _shakeAnimation.value) *
+                      6 *
+                      ((_shakeController.value * 6) % 2 < 1 ? 1 : -1);
+          return Transform.translate(
+            offset: Offset(shakeOffset, 0),
+            child: child,
+          );
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: widget.controller,
+              autofocus: true,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              onChanged: (_) => _validate(),
+              decoration: InputDecoration(
+                labelText: 'Rate (%)',
+                hintText: 'e.g., 0.25, 1.5, 40',
+                suffixText: '%',
+                border: const OutlineInputBorder(),
+                errorText: _errorText,
+              ),
+              onSubmitted: (_) => _apply(),
             ),
-            onChanged: (_) => _validate(),
-            decoration: InputDecoration(
-              labelText: 'Rate (%)',
-              hintText: 'e.g., 0.25, 1.5, 40',
-              suffixText: '%',
-              border: const OutlineInputBorder(),
-              errorText: _errorText,
+            const SizedBox(height: 4),
+            Text(
+              'Enter a rate between 0% and 100%',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
-            onSubmitted: (_) => _apply(),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Enter a rate between 0% and 100%',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(

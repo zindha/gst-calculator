@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/app_animations.dart';
 import '../../../../core/widgets/section_label.dart';
 import '../../domain/entities/gst_calculation_type.dart';
 import '../../domain/entities/gst_transaction_type.dart';
@@ -93,7 +94,7 @@ class SegmentOption {
 /// [emphasized] picks the size: a taller, bolder primary control versus a
 /// compact secondary one. Each segment is a full-height, full-width touch
 /// target, not just its label.
-class SegmentedControl extends StatelessWidget {
+class SegmentedControl extends StatefulWidget {
   final List<SegmentOption> options;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
@@ -108,59 +109,103 @@ class SegmentedControl extends StatelessWidget {
   });
 
   @override
+  State<SegmentedControl> createState() => _SegmentedControlState();
+}
+
+class _SegmentedControlState extends State<SegmentedControl>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _underlineController;
+  double _underlineTarget = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _underlineController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _underlineTarget = widget.selectedIndex == 0 ? -1.0 : 1.0;
+    _underlineController.value = _underlineTarget;
+  }
+
+  @override
+  void didUpdateWidget(SegmentedControl oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedIndex != oldWidget.selectedIndex) {
+      final newTarget = widget.selectedIndex == 0 ? -1.0 : 1.0;
+      // Spring the underline to the new position.
+      final sim = AppSpring.fast.toSimulation(
+        from: _underlineController.value,
+        to: newTarget,
+        velocity: _underlineController.velocity,
+      );
+      _underlineController.animateWith(sim);
+      _underlineTarget = newTarget;
+    }
+  }
+
+  @override
+  void dispose() {
+    _underlineController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final duration = appMotion(context, milliseconds: 200);
 
-    final height = emphasized ? 46.0 : 38.0;
-    final labelSize = emphasized ? 14.0 : 13.0;
-    final iconSize = emphasized ? 17.0 : 16.0;
+    final height = widget.emphasized ? 46.0 : 38.0;
+    final labelSize = widget.emphasized ? 14.0 : 13.0;
+    final iconSize = widget.emphasized ? 17.0 : 16.0;
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final segmentWidth = constraints.maxWidth / options.length;
+        final segmentWidth = constraints.maxWidth / widget.options.length;
         return SizedBox(
           height: height,
           child: Stack(
             children: [
-              // Sliding underline — the only selection chrome.
-              AnimatedAlign(
-                duration: duration,
-                curve: Curves.easeOutCubic,
-                alignment: Alignment(selectedIndex == 0 ? -1 : 1, 1),
-                child: Container(
-                  width: segmentWidth,
-                  height: 2,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary,
-                    borderRadius: BorderRadius.circular(1),
-                  ),
-                ),
+              // Sliding underline — spring-driven, not curve-driven.
+              AnimatedBuilder(
+                animation: _underlineController,
+                builder: (context, _) {
+                  return Align(
+                    alignment: Alignment(_underlineController.value, 1),
+                    child: Container(
+                      width: segmentWidth,
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                  );
+                },
               ),
               // Segments. Positioned.fill makes the row span the full control
               // height; each segment then centers its content so the icon and
               // label stay vertically centered as one unit in both states.
               Positioned.fill(
                 child: Row(
-                  children: List.generate(options.length, (i) {
-                    final selected = i == selectedIndex;
+                  children: List.generate(widget.options.length, (i) {
+                    final selected = i == widget.selectedIndex;
                     final contentColor = selected
                         ? theme.colorScheme.primary
                         : theme.colorScheme.onSurfaceVariant;
                     return Expanded(
                       child: Semantics(
-                        label: options[i].label,
+                        label: widget.options[i].label,
                         selected: selected,
                         button: true,
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTap: () => onSelected(i),
+                          onTap: () => widget.onSelected(i),
                           child: Center(
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  options[i].icon,
+                                  widget.options[i].icon,
                                   size: iconSize,
                                   color: contentColor,
                                 ),
@@ -169,7 +214,7 @@ class SegmentedControl extends StatelessWidget {
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     child: Text(
-                                      options[i].label,
+                                      widget.options[i].label,
                                       maxLines: 1,
                                       style: TextStyle(
                                         fontFamily: 'Manrope',

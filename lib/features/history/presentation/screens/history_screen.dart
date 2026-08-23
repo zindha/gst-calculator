@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/app_animations.dart';
 import '../../../../core/utils/accessibility_helper.dart';
 import '../../../../core/widgets/app_header.dart';
 import '../../../../core/widgets/empty_state.dart';
@@ -79,11 +80,19 @@ class HistoryScreen extends ConsumerWidget {
                             itemCount: entries.length,
                             itemBuilder: (context, index) {
                               final entry = entries[index];
-                              return HistoryListItem(
-                                entry: entry,
-                                onTap:
-                                    () =>
-                                        _reloadCalculation(context, ref, entry),
+                              // Staggered spring entrance for each list item.
+                              return SpringEntrance(
+                                index: index,
+                                delay: const Duration(milliseconds: 40),
+                                child: HistoryListItem(
+                                  entry: entry,
+                                  onTap:
+                                      () => _reloadCalculation(
+                                        context,
+                                        ref,
+                                        entry,
+                                      ),
+                                ),
                               );
                             },
                           ),

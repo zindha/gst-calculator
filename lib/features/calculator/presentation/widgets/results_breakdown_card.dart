@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/color_presets.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/currency_formatter.dart';
@@ -330,7 +332,8 @@ class _SpringSwitcherState extends State<_SpringSwitcher>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: widget.duration,
+      // Safety cap; the spring settles on its own.
+      duration: const Duration(milliseconds: 800),
     );
     _newChild = widget.child;
   }
@@ -342,7 +345,15 @@ class _SpringSwitcherState extends State<_SpringSwitcher>
       _isAnimating = true;
       _oldChild = _newChild;
       _newChild = widget.child;
-      _controller.forward(from: 0).then((_) {
+      // Drive the crossfade with a real spring simulation.
+      final simulation = AppSpring.medium.toSimulation(
+        from: 0,
+        to: 1,
+        velocity: 0,
+      );
+      _controller
+          .animateWith(simulation)
+          .then((_) {
         _isAnimating = false;
         _oldChild = null;
       });
@@ -360,23 +371,22 @@ class _SpringSwitcherState extends State<_SpringSwitcher>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, _) {
-        final t = _controller.value;
-        // Spring-like easing: fast entry, gentle settle.
-        final easedT = Curves.easeOutCubic.transform(t);
+        // Clamp because the spring overshoots past 1.0.
+        final t = _controller.value.clamp(0.0, 1.0);
 
         return Stack(
           children: [
             if (_oldChild != null && _isAnimating)
               IgnorePointer(
                 child: Opacity(
-                  opacity: 1 - easedT,
+                  opacity: 1 - t,
                   child: _oldChild,
                 ),
               ),
             Opacity(
-              opacity: _isAnimating ? easedT : 1,
+              opacity: _isAnimating ? t : 1,
               child: Transform.translate(
-                offset: Offset(0, _isAnimating ? (1 - easedT) * 6 : 0),
+                offset: Offset(0, _isAnimating ? (1 - t) * 8 : 0),
                 child: _newChild,
               ),
             ),

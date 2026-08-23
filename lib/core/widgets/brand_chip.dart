@@ -11,7 +11,7 @@ import '../theme/app_animations.dart';
 /// - transparent fill + thin border when unselected, so only the active
 ///   choice carries a surface (the page background shows through)
 /// - solid brand-primary fill + high-contrast content when selected
-/// - a small 0.97 press scale (120ms) as the only press feedback
+/// - spring-driven press scale (bounces with momentum, not a baked curve)
 class BrandChip extends StatefulWidget {
   /// Chip label, e.g. `18%`.
   final String label;
@@ -40,57 +40,8 @@ class BrandChip extends StatefulWidget {
   State<BrandChip> createState() => _BrandChipState();
 }
 
-class _BrandChipState extends State<BrandChip>
-    with SingleTickerProviderStateMixin {
+class _BrandChipState extends State<BrandChip> {
   bool _pressed = false;
-  late final AnimationController _pressController;
-  late Animation<double> _pressAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _pressController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-    _pressAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
-      CurvedAnimation(parent: _pressController, curve: Curves.easeOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _pressController.dispose();
-    super.dispose();
-  }
-
-  void _onTapDown(TapDownDetails _) {
-    setState(() => _pressed = true);
-    // Spring into the pressed state: low velocity gives a soft bounce.
-    final simulation = AppSpring.gentle.toSimulation(from: 1.0, to: 0.97);
-    _pressController.animateWith(simulation);
-  }
-
-  void _onTapUp(TapUpDetails _) {
-    setState(() => _pressed = false);
-    // Spring back: reversed spring with the release velocity.
-    final simulation = AppSpring.gentle.toSimulation(
-      from: _pressController.value,
-      to: 1.0,
-      velocity: _pressController.velocity,
-    );
-    _pressController.animateWith(simulation);
-  }
-
-  void _onTapCancel() {
-    setState(() => _pressed = false);
-    final simulation = AppSpring.gentle.toSimulation(
-      from: _pressController.value,
-      to: 1.0,
-      velocity: _pressController.velocity,
-    );
-    _pressController.animateWith(simulation);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,20 +66,15 @@ class _BrandChipState extends State<BrandChip>
           '${widget.label}${selected ? ', selected' : ''}',
       button: true,
       selected: selected,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown: _onTapDown,
-        onTapCancel: _onTapCancel,
-        onTapUp: _onTapUp,
+      child: SpringScale(
+        pressed: _pressed,
+        pressedScale: 0.97,
         onTap: widget.onTap,
-        child: AnimatedBuilder(
-          animation: _pressAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _pressAnimation.value,
-              child: child,
-            );
-          },
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (_) => setState(() => _pressed = true),
+          onTapCancel: () => setState(() => _pressed = false),
+          onTapUp: (_) => setState(() => _pressed = false),
           child: AnimatedContainer(
             duration: duration,
             curve: Curves.easeOutCubic,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/gst_rates.dart';
 import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/app_animations.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/rate_formatter.dart';
 import '../../../../core/widgets/app_header.dart';
@@ -35,67 +36,85 @@ class SettingsScreen extends ConsumerWidget {
                     vertical: AppSpacing.sm,
                   ),
                   children: [
-                    _SectionHeader(title: 'Theme', icon: Icons.palette_rounded),
-                    _SettingsCard(
-                      children: [
-                        ListTile(
-                          title: const Text('Appearance'),
-                          subtitle: Text(_themeLabel(settings.themeMode)),
-                          leading: const Icon(Icons.brightness_6_rounded),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () => _showThemePicker(context, ref, settings),
-                        ),
-                      ],
+                    SpringEntrance(
+                      index: 0,
+                      child: _SectionHeader(title: 'Theme', icon: Icons.palette_rounded),
+                    ),
+                    SpringEntrance(
+                      index: 1,
+                      child: _SettingsCard(
+                        children: [
+                          ListTile(
+                            title: const Text('Appearance'),
+                            subtitle: Text(_themeLabel(settings.themeMode)),
+                            leading: const Icon(Icons.brightness_6_rounded),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap: () => _showThemePicker(context, ref, settings),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
 
-                    _SectionHeader(title: 'Defaults', icon: Icons.tune_rounded),
-                    _SettingsCard(
-                      children: [
-                        ListTile(
-                          title: const Text('Default GST Rate'),
-                          subtitle: Text('${formatRate(settings.defaultSlab)}%'),
-                          leading: const Icon(Icons.percent_rounded),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () => _showSlabPicker(context, ref, settings),
-                        ),
-                        const Divider(height: 1, indent: 72),
-                        ListTile(
-                          title: const Text('Default Tax Type'),
-                          subtitle: Text(settings.defaultCalculationType.label),
-                          leading: const Icon(Icons.calculate_rounded),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap:
-                              () => _showCalcTypePicker(context, ref, settings),
-                        ),
-                        const Divider(height: 1, indent: 72),
-                        ListTile(
-                          title: const Text('Default Transaction'),
-                          subtitle: Text(settings.defaultTransactionType.label),
-                          leading: const Icon(Icons.location_city_rounded),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap:
-                              () =>
-                                  _showTransTypePicker(context, ref, settings),
-                        ),
-                      ],
+                    SpringEntrance(
+                      index: 2,
+                      child: _SectionHeader(title: 'Defaults', icon: Icons.tune_rounded),
+                    ),
+                    SpringEntrance(
+                      index: 3,
+                      child: _SettingsCard(
+                        children: [
+                          ListTile(
+                            title: const Text('Default GST Rate'),
+                            subtitle: Text('${formatRate(settings.defaultSlab)}%'),
+                            leading: const Icon(Icons.percent_rounded),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap: () => _showSlabPicker(context, ref, settings),
+                          ),
+                          const Divider(height: 1, indent: 72),
+                          ListTile(
+                            title: const Text('Default Tax Type'),
+                            subtitle: Text(settings.defaultCalculationType.label),
+                            leading: const Icon(Icons.calculate_rounded),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap:
+                                () => _showCalcTypePicker(context, ref, settings),
+                          ),
+                          const Divider(height: 1, indent: 72),
+                          ListTile(
+                            title: const Text('Default Transaction'),
+                            subtitle: Text(settings.defaultTransactionType.label),
+                            leading: const Icon(Icons.location_city_rounded),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap:
+                                () =>
+                                    _showTransTypePicker(context, ref, settings),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
 
-                    _SectionHeader(title: 'Data', icon: Icons.storage_rounded),
-                    _SettingsCard(
-                      children: [
-                        ListTile(
-                          title: const Text('Clear Calculation History'),
-                          subtitle: Text('$historyCount entries stored'),
-                          leading: const Icon(Icons.delete_outline_rounded),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap:
-                              historyCount > 0
-                                  ? () => _confirmClearHistory(context, ref)
-                                  : null,
-                        ),
-                      ],
+                    SpringEntrance(
+                      index: 4,
+                      child: _SectionHeader(title: 'Data', icon: Icons.storage_rounded),
+                    ),
+                    SpringEntrance(
+                      index: 5,
+                      child: _SettingsCard(
+                        children: [
+                          ListTile(
+                            title: const Text('Clear Calculation History'),
+                            subtitle: Text('$historyCount entries stored'),
+                            leading: const Icon(Icons.delete_outline_rounded),
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap:
+                                historyCount > 0
+                                    ? () => _confirmClearHistory(context, ref)
+                                    : null,
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.xxxl),
 

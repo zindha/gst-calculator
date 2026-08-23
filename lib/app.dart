@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
 import 'core/utils/accessibility_helper.dart';
+import 'core/utils/deep_link_handler.dart';
 import 'features/calculator/presentation/screens/gst_calculator_screen.dart';
 import 'features/history/presentation/screens/history_screen.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -28,41 +29,43 @@ class GSTCalculatorApp extends ConsumerWidget {
   }
 }
 
-class _AppEntry extends ConsumerWidget {
+class _AppEntry extends ConsumerStatefulWidget {
   const _AppEntry();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_AppEntry> createState() => _AppEntryState();
+}
+
+class _AppEntryState extends ConsumerState<_AppEntry> {
+  DeepLinkParams? _deepLink;
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDeepLink();
+  }
+
+  Future<void> _loadDeepLink() async {
+    final params = await DeepLinkHandler.parseInitial();
+    if (mounted) {
+      setState(() {
+        _deepLink = params;
+        _loaded = true;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     if (!settings.onboardingDone) return const OnboardingScreen();
+    if (!_loaded) return const SizedBox.shrink();
 
-    // Parse deep link query parameters from the initial route.
-    final initialAmount = _parseInitialAmount();
-    final initialRate = _parseInitialRate();
     return _MainShell(
-      initialAmount: initialAmount,
-      initialRate: initialRate,
+      initialAmount: _deepLink?.amount,
+      initialRate: _deepLink?.rate,
     );
-  }
-
-  /// Parses the `amount` query parameter from the app's initial URI.
-  double? _parseInitialAmount() {
-    final uri = Uri.base;
-    final amountStr = uri.queryParameters['amount'];
-    if (amountStr == null) return null;
-    final amount = double.tryParse(amountStr);
-    if (amount == null || amount <= 0) return null;
-    return amount;
-  }
-
-  /// Parses the `rate` query parameter from the app's initial URI.
-  double? _parseInitialRate() {
-    final uri = Uri.base;
-    final rateStr = uri.queryParameters['rate'];
-    if (rateStr == null) return null;
-    final rate = double.tryParse(rateStr);
-    if (rate == null || rate < 0 || rate > 100) return null;
-    return rate;
   }
 }
 
