@@ -154,8 +154,14 @@ class _CustomRateDialogState extends State<_CustomRateDialog>
     final rate = double.tryParse(text);
     if (rate == null) {
       setState(() => _errorText = 'Enter a valid number');
-    } else if (rate < 0 || rate > 100) {
-      setState(() => _errorText = 'Rate must be between 0 and 100');
+    } else if (rate < GstRates.minCustomSlab ||
+        rate > GstRates.maxCustomSlab) {
+      setState(
+        () => _errorText =
+            'Rate must be between '
+            '${formatRate(GstRates.minCustomSlab)} and '
+            '${formatRate(GstRates.maxCustomSlab)}',
+      );
     } else {
       setState(() => _errorText = null);
     }
@@ -164,7 +170,9 @@ class _CustomRateDialogState extends State<_CustomRateDialog>
   void _apply() {
     final text = widget.controller.text.trim();
     final rate = double.tryParse(text);
-    if (rate == null || rate < 0 || rate > 100) {
+    if (rate == null ||
+        rate < GstRates.minCustomSlab ||
+        rate > GstRates.maxCustomSlab) {
       _validate();
       _triggerShake();
       return;
@@ -214,7 +222,9 @@ class _CustomRateDialogState extends State<_CustomRateDialog>
             ),
             const SizedBox(height: 4),
             Text(
-              'Enter a rate between 0% and 100%',
+              'Enter a rate between '
+              '${formatRate(GstRates.minCustomSlab)}% and '
+              '${formatRate(GstRates.maxCustomSlab)}%',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),

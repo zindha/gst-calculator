@@ -182,6 +182,8 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
         // Quick amounts — one deliberate row of four plain text actions.
         // No pill chrome: they are suggestions under the field, so they read
         // as links, not as another set of buttons competing with the input.
+        // Each carries a leading plus so it reads as "add this amount", not
+        // as a bare value with no meaning.
         Row(
           children: [
             for (var i = 0; i < _quickAmounts.length; i++) ...[
@@ -210,17 +212,24 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
             // crowd the row — the four actions stay on one line.
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text(
-                _quickLabel(amount),
-                maxLines: 1,
-                style: TextStyle(
-                  fontFamily: 'Manrope',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: primary,
-                  fontVariations: const [FontVariation('wght', 600)],
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(LucideIcons.plus, size: 14, color: primary),
+                  const SizedBox(width: 2),
+                  Text(
+                    _quickLabel(amount),
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontFamily: 'Manrope',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: primary,
+                      fontVariations: const [FontVariation('wght', 600)],
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

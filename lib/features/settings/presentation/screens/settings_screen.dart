@@ -199,7 +199,7 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder:
           (ctx) => SafeArea(
-            // Scrollable: all seven GST slabs would otherwise overflow the
+            // Scrollable: all six GST slabs would otherwise overflow the
             // sheet on short screens.
             child: SingleChildScrollView(
               child: Column(

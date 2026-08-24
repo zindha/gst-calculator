@@ -88,7 +88,6 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       await _skipOnboarding(tester);
 
-      expect(find.text('0%'), findsOneWidget);
       expect(find.text('0.25%'), findsOneWidget);
       expect(find.text('3%'), findsOneWidget);
       expect(find.text('5%'), findsOneWidget);

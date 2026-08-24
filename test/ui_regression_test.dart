@@ -396,6 +396,43 @@ void main() {
     expect(_captured, isEmpty, reason: _reason());
   });
 
+  testWidgets('Calculator: rapid slab switch shows the latest rate', (
+    tester,
+  ) async {
+    _usePhoneView(tester);
+    SharedPreferences.setMockInitialValues({});
+    _installCapture();
+    await _installPluginMocks();
+    await _finishOnboarding(tester);
+
+    // Enter an amount, then switch 3% → 12% while the result crossfade from
+    // the first tap is still running. Regression: the spring switcher used to
+    // drop the child that arrived mid-animation, leaving the 3% total on
+    // screen even though the state held the 12% result.
+    await tester.enterText(find.byType(TextField).first, '1000');
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('3%'));
+    await tester.pump(const Duration(milliseconds: 100)); // crossfade in flight
+    await tester.tap(find.text('12%'));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pumpAndSettle();
+
+    // The 12% result must be on screen: ₹1,000 + 12% = ₹1,120.00.
+    expect(find.text('₹1,120.00'), findsOneWidget);
+    // The stale 3% total (₹1,030.00) must be gone.
+    expect(find.text('₹1,030.00'), findsNothing);
+    expect(find.text('CGST @ 6%'), findsOneWidget);
+    expect(find.text('SGST @ 6%'), findsOneWidget);
+
+    // Flush the auto-save debounce so no timer is left pending.
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+
+    _dump('rapid slab switch');
+    expect(_captured, isEmpty, reason: _reason());
+  });
+
   // ── Brand pass: icon-derived default identity ─────────────────────────
 
   test('Brand: no-accent default uses the icon-derived brand palette', () {

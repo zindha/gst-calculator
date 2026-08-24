@@ -3,8 +3,8 @@ import 'package:gst_calculator/core/constants/gst_rates.dart';
 
 void main() {
   group('GstRates', () {
-    test('standardSlabs contains exactly 7 rates', () {
-      expect(GstRates.standardSlabs.length, 7);
+    test('standardSlabs contains exactly 6 rates', () {
+      expect(GstRates.standardSlabs.length, 6);
     });
 
     test('standardSlabs are in ascending order', () {
@@ -17,9 +17,9 @@ void main() {
     });
 
     test('standardSlabs contains expected Indian GST rates', () {
-      // The full official structure: 0% (nil-rated), 0.25% (rough diamonds),
-      // 3% (gold / cut & polished diamonds), 5%, 12%, 18%, 28%.
-      expect(GstRates.standardSlabs, [0.0, 0.25, 3.0, 5.0, 12.0, 18.0, 28.0]);
+      // The active slabs: 0.25% (rough diamonds), 3% (gold / cut & polished
+      // diamonds), 5%, 12%, 18%, 28%. The 0% nil-rated slab is not offered.
+      expect(GstRates.standardSlabs, [0.25, 3.0, 5.0, 12.0, 18.0, 28.0]);
     });
 
     test('defaultSlab is 18%', () {
@@ -30,8 +30,8 @@ void main() {
       expect(GstRates.standardSlabs, contains(GstRates.defaultSlab));
     });
 
-    test('minCustomSlab is 0', () {
-      expect(GstRates.minCustomSlab, 0.0);
+    test('minCustomSlab is 0.25', () {
+      expect(GstRates.minCustomSlab, 0.25);
     });
 
     test('maxCustomSlab is 100', () {

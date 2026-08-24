@@ -339,22 +339,28 @@ class _SpringSwitcherState extends State<_SpringSwitcher>
   @override
   void didUpdateWidget(_SpringSwitcher oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.child != widget.child && !_isAnimating) {
-      _isAnimating = true;
-      _oldChild = _newChild;
-      _newChild = widget.child;
-      // Drive the crossfade with a real spring simulation.
-      final simulation = AppSpring.medium.toSimulation(
-        from: 0,
-        to: 1,
-        velocity: 0,
-      );
-      _controller
-          .animateWith(simulation)
-          .then((_) {
-        _isAnimating = false;
-        _oldChild = null;
-      });
+    if (oldWidget.child != widget.child) {
+      if (!_isAnimating) {
+        _isAnimating = true;
+        _oldChild = _newChild;
+        _newChild = widget.child;
+        // Drive the crossfade with a real spring simulation.
+        final simulation = AppSpring.medium.toSimulation(
+          from: 0,
+          to: 1,
+          velocity: 0,
+        );
+        _controller.animateWith(simulation).then((_) {
+          _isAnimating = false;
+          _oldChild = null;
+        });
+      } else {
+        // A new child arrived while the crossfade was still running.
+        // Adopt it immediately instead of dropping it: otherwise a rapid
+        // switch (e.g. 3% → 12% within a second) leaves the earlier result
+        // on screen because the in-flight fade finishes with the stale child.
+        _newChild = widget.child;
+      }
     }
   }
 

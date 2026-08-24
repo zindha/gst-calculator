@@ -6,7 +6,7 @@ calculation history — built for Android.
 ## Features
 
 - **GST calculator** — exclusive ("add GST") and inclusive ("extract GST")
-  modes, across all Indian slabs (0%, 0.25%, 3%, 5%, 12%, 18%, 28%).
+  modes, across all Indian slabs (0.25%, 3%, 5%, 12%, 18%, 28%).
 - **Intra-state vs inter-state** — automatic CGST + SGST split, or single IGST.
 - **Calculation history** — every calculation is saved locally; delete
   individual entries or clear all.
