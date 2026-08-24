@@ -1,0 +1,30 @@
+GST Calculator India — the fastest way to compute Goods & Services Tax for Indian invoices.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ INSTANT CALCULATION
+Enter any amount, pick a GST slab (3%, 5%, 12%, 18%, 28%), and see the full breakdown instantly — CGST + SGST for intra-state or IGST for inter-state.
+
+➕ ADD GST · ➖ REMOVE GST
+Whether you need to add tax to a base amount or reverse-calculate the original price from a tax-inclusive total, this app handles both directions.
+
+📊 FULL BREAKDOWN
+• Base amount
+• CGST / SGST / IGST with exact slab rates
+• Total amount with GST included
+• Custom rate support for non-standard slabs
+
+📋 HISTORY & EXPORT
+Every calculation is saved automatically. Browse your history, copy any result, or export the entire log as a CSV file for your records.
+
+🎨 DESIGNED FOR YOU
+• Light & dark theme — toggle in Settings
+• Indian rupee formatting with proper lakh/crore grouping
+• Spring-animated, responsive interface
+• Works offline — no internet required
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Perfect for accountants, business owners, freelancers, students, and anyone who needs quick GST math on the go.
+
+Built with Flutter. Open source.

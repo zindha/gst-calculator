@@ -59,6 +59,15 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
+            // R8 minification: shrinks and optimizes the release APK/AAB.
+            // ProGuard rules keep Flutter plugin classes and Reflection-based
+            // code that R8 would otherwise strip.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

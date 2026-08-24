@@ -1,0 +1,7 @@
+# Google Play Store credentials.
+# Replace package_name with your actual application ID.
+# json_key_file should point to a Google Cloud service account JSON
+# with Play Store API access (Settings → API access in Play Console).
+
+package_name("com.gstcalculator.app")
+# json_key_file("path/to/play-store-key.json")

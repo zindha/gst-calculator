@@ -20,8 +20,9 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Keep the system bars transparent; icon brightness is driven per-theme
-  // by the AppBarTheme's systemOverlayStyle (see app_theme.dart).
+  // Edge-to-edge: draw behind system bars so content extends under
+  // the status and navigation bars. Required for Android 15+ (API 35+).
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,

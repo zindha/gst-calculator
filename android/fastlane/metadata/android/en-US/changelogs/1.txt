@@ -1,0 +1,9 @@
+• Initial release — GST Calculator for Indian tax slabs
+• Add GST / Remove GST calculation modes
+• Intra-State (CGST + SGST) and Inter-State (IGST) tax types
+• Standard slabs: 3%, 5%, 12%, 18%, 28% + custom rate
+• Calculation history with CSV export
+• Light & dark theme
+• Indian rupee formatting (lakh/crore grouping)
+• Quick amount presets
+• Copy & share results

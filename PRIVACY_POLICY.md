@@ -1,44 +1,57 @@
-# Privacy Policy
+# Privacy Policy — GST Calculator India
 
-**Last updated:** August 15, 2026
+**Last updated:** August 2026
 
-**GST Calculator** ("the app") is a local, offline utility for calculating
-Indian GST. This policy explains what data the app handles.
+GST Calculator India ("the App") is built with respect for your privacy. This policy explains what data the App accesses, stores, and shares.
 
-## Data we collect
+---
 
-The app does **not** collect, transmit, or store any personal data on external
-servers, and it contains no analytics, advertising, or tracking SDKs. All data
-you enter is stored **locally on your device**:
+## Data the App Stores Locally
 
-- Calculation history (amounts, GST rates, results)
-- App settings and preferences
+The App stores the following data **only on your device** using Android SharedPreferences:
 
-### Android cloud backup
+| Data | Purpose | Retention |
+|------|---------|-----------|
+| Calculation history | Let you browse and reuse past calculations | Until you clear it in Settings |
+| Theme preference | Remember light/dark mode choice | Until you change it |
+| Default GST slab / calculation type / tax type | Pre-fill the calculator on launch | Until you change it |
+| Onboarding completion flag | Skip the intro on subsequent launches | Until app data is cleared |
 
-Android's optional Auto Backup may include **non-sensitive data only** — app
-settings and calculation history — in the cloud backup tied to your Google
-account. Device-to-device transfer (when you move to a new device signed into
-the same Google account) may carry all of your data to that device.
+**None of this data is transmitted off your device.**
+
+---
+
+## Data the App Backs Up
+
+If you have Android cloud backup enabled, the App's local preferences (listed above) may be included in your Google account backup. This backup is governed by your Google account settings, not by this App.
+
+The App does **not** send any data to any server, analytics service, or third party.
+
+---
 
 ## Permissions
 
-- **Share** — used only when you explicitly tap "Share" to send a calculation
-  or CSV via another app.
+| Permission | Why |
+|------------|-----|
+| `INTERNET` | Required by the Flutter engine for development tools (debug builds only). Not used at runtime in release builds. |
 
-## Third-party services
+The App does **not** request access to your camera, contacts, location, storage, microphone, or any other sensitive permission.
 
-The app does not include third-party analytics, advertising, or tracking SDKs.
+---
 
-## Data retention & deletion
+## Children's Privacy
 
-All data is stored on your device. Deleting history from within the app
-removes that data. Uninstalling the app deletes all locally stored data. Cloud-backup copies of non-sensitive data, if any, are governed by
-your Android backup settings (Settings → System → Backup); you can disable
-backup or clear your backup data there at any time.
+The App does not knowingly collect data from children under 13. The App is a general-purpose utility and is not directed at children.
+
+---
+
+## Changes to This Policy
+
+If this privacy policy changes, the updated version will be included in the next App release. Continued use of the App after updates constitutes acceptance of the revised policy.
+
+---
 
 ## Contact
 
-For questions about this policy, contact the app developer at:
-**your-email@example.com** *(pre-release placeholder — replace with the real
-support email before publishing; see the README release checklist)*
+For questions about this privacy policy, please open an issue at:
+https://github.com/zindha/gst-calculator/issues
