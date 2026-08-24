@@ -57,16 +57,16 @@ class AppHeader extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style:
                     display
-                        // Display titles are extra bold (variable-font wght
-                        // 800) with tight tracking so the wordmark carries
-                        // the same strong, confident weight as the icon.
+                        // Display titles use semibold (variable-font wght
+                        // 650) — strong enough to be the screen's anchor
+                        // without feeling like a webpage heading.
                         ? TextStyle(
                           fontFamily: 'Manrope',
                           fontSize: 26,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.5,
                           color: titleColor,
-                          fontVariations: const [FontVariation('wght', 800)],
+                          fontVariations: const [FontVariation('wght', 650)],
                         )
                         : theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,

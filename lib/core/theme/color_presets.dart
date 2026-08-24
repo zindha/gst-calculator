@@ -45,10 +45,11 @@ class BrandColors {
 
   // ── Primary content text (title / hero numerals) ────────────────────────
 
-  /// Light-theme primary content — dark charcoal, the deliberate refinement
-  /// of the previous near-black title. Content is charcoal, brand navy is the
-  /// accent, neutrals are gray — never the reverse.
-  static const Color textPrimaryLight = Color(0xFF181A1F);
+  /// Light-theme primary content — deep navy charcoal. Softer than pure
+  /// black, it matches the brand navy family while staying the strongest
+  /// text on screen. Content is navy-charcoal, brand navy is the accent,
+  /// neutrals are gray — never the reverse.
+  static const Color textPrimaryLight = Color(0xFF172033);
 
   /// Dark-theme primary content — near-white on the deep navy surfaces.
   static const Color textPrimaryDark = Color(0xFFF1F3F9);
