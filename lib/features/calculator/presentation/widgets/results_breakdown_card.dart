@@ -223,6 +223,12 @@ class ResultsBreakdownCard extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(ThemeData theme) {
+    final isDark = theme.brightness == Brightness.dark;
+    // In dark mode, onSurfaceVariant from M3 is too faint — boost both
+    // the icon and description so the placeholder is clearly readable.
+    final mutedColor = isDark
+        ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 1.0)
+        : theme.colorScheme.onSurfaceVariant;
     return Row(
       key: const ValueKey('result-empty'),
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -230,7 +236,7 @@ class ResultsBreakdownCard extends ConsumerWidget {
         Icon(
           LucideIcons.receipt,
           size: 20,
-          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          color: mutedColor.withValues(alpha: isDark ? 0.8 : 0.7),
         ),
         const SizedBox(width: AppSpacing.md),
         Expanded(
@@ -249,7 +255,7 @@ class ResultsBreakdownCard extends ConsumerWidget {
               Text(
                 'Enter an amount and pick a rate to see the GST breakdown',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: mutedColor,
                   height: 1.35,
                 ),
               ),
