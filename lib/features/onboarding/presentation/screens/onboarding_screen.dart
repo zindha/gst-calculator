@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/theme/app_tokens.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
@@ -20,19 +21,19 @@ class _OnboardingSlide {
 /// The onboarding slides shown on first launch.
 const List<_OnboardingSlide> _slides = [
   _OnboardingSlide(
-    icon: Icons.calculate_rounded,
+    icon: LucideIcons.calculator,
     title: 'Quick GST Calculations',
     description:
         'Calculate GST instantly with live updates. Switch between Exclusive (+GST) and Inclusive (-GST) modes.',
   ),
   _OnboardingSlide(
-    icon: Icons.swap_horiz_rounded,
+    icon: LucideIcons.arrowLeftRight,
     title: 'Reverse GST & History',
     description:
         'Reverse-calculate the base price from a gross total. Every calculation is saved to your history automatically.',
   ),
   _OnboardingSlide(
-    icon: Icons.palette_rounded,
+    icon: LucideIcons.palette,
     title: 'Settings & Themes',
     description:
         'Pick a theme and set your default rate, tax type, and transaction type.',
@@ -184,7 +185,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           _currentPage < _slides.length - 1
                               ? () => _pageController.nextPage(
                                 duration: slideDuration,
-                                curve: Curves.easeInOut,
+                                curve: Curves.easeOutCubic,
                               )
                               : _onDone,
                       child: Text(

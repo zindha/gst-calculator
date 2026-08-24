@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gst_calculator/app.dart';
 import 'package:gst_calculator/core/theme/app_theme.dart';
@@ -487,7 +488,7 @@ void main() {
 
     // The receipt glyph appears only as the decorative empty-state
     // illustration — never as an action button or entry point.
-    final receiptIcon = find.byIcon(Icons.receipt_long_outlined);
+    final receiptIcon = find.byIcon(LucideIcons.receipt);
     expect(receiptIcon, findsOneWidget);
     expect(
       find.descendant(

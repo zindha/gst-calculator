@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/color_presets.dart';
@@ -157,7 +158,7 @@ class _AmountInputFieldState extends ConsumerState<AmountInputField> {
                               .updateAmount('');
                           widget.focusNode.requestFocus();
                         },
-                        icon: const Icon(Icons.close_rounded, size: 20),
+                        icon: const Icon(LucideIcons.x, size: 20),
                         tooltip: 'Clear amount',
                         color: theme.colorScheme.onSurfaceVariant,
                       )

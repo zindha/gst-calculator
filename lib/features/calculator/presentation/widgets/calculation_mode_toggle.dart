@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/app_animations.dart';
@@ -32,11 +33,11 @@ class CalculationModeToggle extends ConsumerWidget {
             options: const [
               SegmentOption(
                 label: 'Add GST',
-                icon: Icons.add_circle_outline_rounded,
+                icon: LucideIcons.plusCircle,
               ),
               SegmentOption(
                 label: 'Remove GST',
-                icon: Icons.remove_circle_outline_rounded,
+                icon: LucideIcons.minusCircle,
               ),
             ],
             selectedIndex: isExclusive ? 0 : 1,
@@ -58,9 +59,9 @@ class CalculationModeToggle extends ConsumerWidget {
             options: const [
               SegmentOption(
                 label: 'Intra-State',
-                icon: Icons.location_city_rounded,
+                icon: LucideIcons.building,
               ),
-              SegmentOption(label: 'Inter-State', icon: Icons.public_rounded),
+              SegmentOption(label: 'Inter-State', icon: LucideIcons.globe),
             ],
             selectedIndex: isIntraState ? 0 : 1,
             onSelected: (index) {
@@ -86,11 +87,10 @@ class SegmentOption {
   const SegmentOption({required this.label, required this.icon});
 }
 
-/// A two-option selector with a sliding underline.
+/// A two-option segmented selector with a sliding background pill.
 ///
-/// Deliberately container-free: the options sit directly on the page and the
-/// only selection affordance is a 2px brand underline that slides beneath the
-/// active segment — colour, weight and underline, never a pill or a track.
+/// Selection is communicated through a filled container behind the active
+/// segment plus bold typography — unmistakable, not just a colour shift.
 /// [emphasized] picks the size: a taller, bolder primary control versus a
 /// compact secondary one. Each segment is a full-height, full-width touch
 /// target, not just its label.
@@ -114,130 +114,161 @@ class SegmentedControl extends StatefulWidget {
 
 class _SegmentedControlState extends State<SegmentedControl>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _underlineController;
-  double _underlineTarget = -1;
+  late final AnimationController _pillController;
 
   @override
   void initState() {
     super.initState();
-    _underlineController = AnimationController(
+    _pillController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 250),
     );
-    _underlineTarget = widget.selectedIndex == 0 ? -1.0 : 1.0;
-    _underlineController.value = _underlineTarget;
+    // Start at the selected position (no animation on first build).
+    _pillController.value = widget.selectedIndex == 0 ? 0.0 : 1.0;
   }
 
   @override
   void didUpdateWidget(SegmentedControl oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.selectedIndex != oldWidget.selectedIndex) {
-      final newTarget = widget.selectedIndex == 0 ? -1.0 : 1.0;
-      // Spring the underline to the new position.
-      final sim = AppSpring.fast.toSimulation(
-        from: _underlineController.value,
-        to: newTarget,
-        velocity: _underlineController.velocity,
+      final target = widget.selectedIndex == 0 ? 0.0 : 1.0;
+      // Spring the pill to the new position.
+      final sim = AppSpring.medium.toSimulation(
+        from: _pillController.value,
+        to: target,
+        velocity: _pillController.velocity,
       );
-      _underlineController.animateWith(sim);
-      _underlineTarget = newTarget;
+      _pillController.animateWith(sim);
     }
   }
 
   @override
   void dispose() {
-    _underlineController.dispose();
+    _pillController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    final height = widget.emphasized ? 46.0 : 38.0;
+    // Minimum 44px touch target for both variants.
+    final height = widget.emphasized ? 46.0 : 44.0;
     final labelSize = widget.emphasized ? 14.0 : 13.0;
     final iconSize = widget.emphasized ? 17.0 : 16.0;
+
+    // Track: subtle container that holds the sliding pill.
+    final trackColor = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.04);
+
+    // Pill: the selected segment's filled background.
+    final pillColor = isDark
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.white;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final segmentWidth = constraints.maxWidth / widget.options.length;
+        final pillRadius = AppRadius.sm;
+
         return SizedBox(
           height: height,
-          child: Stack(
-            children: [
-              // Sliding underline — spring-driven, not curve-driven.
-              AnimatedBuilder(
-                animation: _underlineController,
-                builder: (context, _) {
-                  return Align(
-                    alignment: Alignment(_underlineController.value, 1),
-                    child: Container(
+          child: AnimatedBuilder(
+            animation: _pillController,
+            builder: (context, _) {
+              // Interpolate pill position: 0.0 = left segment, 1.0 = right.
+              final pillX = _pillController.value * segmentWidth;
+
+              return Container(
+                decoration: BoxDecoration(
+                  color: trackColor,
+                  borderRadius: BorderRadius.circular(pillRadius + 2),
+                ),
+                padding: const EdgeInsets.all(2),
+                child: Stack(
+                  children: [
+                    // Sliding pill — spring-driven background behind the
+                    // selected segment.
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOutCubic,
+                      left: pillX,
+                      top: 0,
                       width: segmentWidth,
-                      height: 2,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(1),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              // Segments. Positioned.fill makes the row span the full control
-              // height; each segment then centers its content so the icon and
-              // label stay vertically centered as one unit in both states.
-              Positioned.fill(
-                child: Row(
-                  children: List.generate(widget.options.length, (i) {
-                    final selected = i == widget.selectedIndex;
-                    final contentColor = selected
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurfaceVariant;
-                    return Expanded(
-                      child: Semantics(
-                        label: widget.options[i].label,
-                        selected: selected,
-                        button: true,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => widget.onSelected(i),
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  widget.options[i].icon,
-                                  size: iconSize,
-                                  color: contentColor,
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Flexible(
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      widget.options[i].label,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                        fontFamily: 'Manrope',
-                                        fontSize: labelSize,
-                                        height: 1.2,
-                                        fontWeight: selected
-                                            ? FontWeight.w700
-                                            : FontWeight.w500,
-                                        color: contentColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      height: height - 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: pillColor,
+                          borderRadius: BorderRadius.circular(pillRadius),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                    );
-                  }),
+                    ),
+                    // Segments.
+                    Positioned.fill(
+                      child: Row(
+                        children: List.generate(widget.options.length, (i) {
+                          final selected = i == widget.selectedIndex;
+                          final contentColor = selected
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurfaceVariant;
+                          return Expanded(
+                            child: Semantics(
+                              label: widget.options[i].label,
+                              selected: selected,
+                              button: true,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () => widget.onSelected(i),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        widget.options[i].icon,
+                                        size: iconSize,
+                                        color: contentColor,
+                                      ),
+                                      const SizedBox(width: AppSpacing.sm),
+                                      Flexible(
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            widget.options[i].label,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontFamily: 'Manrope',
+                                              fontSize: labelSize,
+                                              height: 1.2,
+                                              fontWeight: selected
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w500,
+                                              color: contentColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              );
+            },
           ),
         );
       },

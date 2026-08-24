@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/app_animations.dart';
@@ -227,7 +228,7 @@ class ResultsBreakdownCard extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Icon(
-          Icons.receipt_long_outlined,
+          LucideIcons.receipt,
           size: 20,
           color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
         ),

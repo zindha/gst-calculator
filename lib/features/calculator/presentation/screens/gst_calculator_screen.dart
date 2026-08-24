@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/app_animations.dart';
@@ -109,8 +110,8 @@ class _GstCalculatorScreenState extends ConsumerState<GstCalculatorScreen> {
                     return A11y.iconButton(
                       icon:
                           themeMode == ThemeMode.dark
-                              ? Icons.light_mode_outlined
-                              : Icons.dark_mode_outlined,
+                              ? LucideIcons.sun
+                              : LucideIcons.moon,
                       label:
                           themeMode == ThemeMode.dark
                               ? 'Switch to light theme'
@@ -131,7 +132,7 @@ class _GstCalculatorScreenState extends ConsumerState<GstCalculatorScreen> {
                 ),
                 // Clear all — resets amount, rate and mode to defaults.
                 A11y.iconButton(
-                  icon: Icons.delete_sweep_outlined,
+                  icon: LucideIcons.trash,
                   label: 'Clear all',
                   iconSize: 22,
                   onPressed: _clearAll,

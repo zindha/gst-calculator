@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/theme/app_tokens.dart';
@@ -35,7 +36,7 @@ class QuickActionsBar extends ConsumerWidget {
                 label: 'Copy calculation breakdown to clipboard',
                 child: OutlinedButton.icon(
                   onPressed: () => _copyBreakdown(context, state, result),
-                  icon: const Icon(Icons.copy_rounded, size: 18),
+                  icon: const Icon(LucideIcons.copy, size: 18),
                   label: const Text('Copy'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: theme.colorScheme.primary,
@@ -57,7 +58,7 @@ class QuickActionsBar extends ConsumerWidget {
                 label: 'Share calculation breakdown',
                 child: FilledButton.icon(
                   onPressed: () => _shareBreakdown(context, state, result),
-                  icon: const Icon(Icons.share_rounded, size: 18),
+                  icon: const Icon(LucideIcons.share, size: 18),
                   label: const Text('Share'),
                   style: FilledButton.styleFrom(
                     shape: RoundedRectangleBorder(

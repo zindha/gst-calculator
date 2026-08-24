@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
 import 'core/utils/accessibility_helper.dart';
@@ -91,18 +92,18 @@ class _MainShellState extends ConsumerState<_MainShell> {
   static const _tabs = <_NavTab>[
     _NavTab(
       label: 'Calculate',
-      icon: Icons.calculate_outlined,
-      selectedIcon: Icons.calculate_rounded,
+      icon: LucideIcons.calculator,
+      selectedIcon: LucideIcons.calculator,
     ),
     _NavTab(
       label: 'History',
-      icon: Icons.history_outlined,
-      selectedIcon: Icons.history_rounded,
+      icon: LucideIcons.history,
+      selectedIcon: LucideIcons.history,
     ),
     _NavTab(
       label: 'Settings',
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings_rounded,
+      icon: LucideIcons.settings,
+      selectedIcon: LucideIcons.settings,
     ),
   ];
 

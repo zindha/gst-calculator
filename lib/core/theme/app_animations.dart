@@ -172,6 +172,7 @@ class _SpringScaleState extends State<SpringScale>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
+      value: 1.0,
     );
   }
 

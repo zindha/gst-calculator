@@ -70,11 +70,13 @@ class _BrandChipState extends State<BrandChip> {
         pressed: _pressed,
         pressedScale: 0.97,
         onTap: widget.onTap,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (_) => setState(() => _pressed = true),
-          onTapCancel: () => setState(() => _pressed = false),
-          onTapUp: (_) => setState(() => _pressed = false),
+        child: Listener(
+          // Listener (not GestureDetector) for press state: it does not
+          // participate in the gesture arena, so SpringScale's GestureDetector
+          // always wins and fires onTap.
+          onPointerDown: (_) => setState(() => _pressed = true),
+          onPointerCancel: (_) => setState(() => _pressed = false),
+          onPointerUp: (_) => setState(() => _pressed = false),
           child: AnimatedContainer(
             duration: duration,
             curve: Curves.easeOutCubic,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gst_calculator/app.dart';
@@ -71,7 +72,7 @@ void main() {
     }
 
     // 18% is the default selected slab, so the check icon is already present.
-    expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+    expect(find.byIcon(LucideIcons.check), findsOneWidget);
     final eighteenBefore = tester.getTopLeft(find.text('18%'));
 
     // Selecting 5% must not move either label or change either pill's
@@ -84,7 +85,7 @@ void main() {
     await tester.tap(find.text('5%'));
     await tester.pumpAndSettle();
 
-    expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+    expect(find.byIcon(LucideIcons.check), findsOneWidget);
     expect(tester.getTopLeft(find.text('5%')), fiveBefore,
         reason: 'selecting a slab must not shift its label');
     expect(tester.getSize(_chipOf('5%')), fiveChipBefore,
@@ -246,13 +247,13 @@ void main() {
 
     IconButton exportBtn = tester.widget(
       find.ancestor(
-        of: find.byIcon(Icons.file_download_outlined),
+        of: find.byIcon(LucideIcons.download),
         matching: find.byType(IconButton),
       ),
     );
     IconButton clearBtn = tester.widget(
       find.ancestor(
-        of: find.byIcon(Icons.delete_sweep_outlined),
+        of: find.byIcon(LucideIcons.trash),
         matching: find.byType(IconButton),
       ),
     );
@@ -274,13 +275,13 @@ void main() {
 
     exportBtn = tester.widget(
       find.ancestor(
-        of: find.byIcon(Icons.file_download_outlined),
+        of: find.byIcon(LucideIcons.download),
         matching: find.byType(IconButton),
       ),
     );
     clearBtn = tester.widget(
       find.ancestor(
-        of: find.byIcon(Icons.delete_sweep_outlined),
+        of: find.byIcon(LucideIcons.trash),
         matching: find.byType(IconButton),
       ),
     );

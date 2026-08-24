@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gst_calculator/app.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 void main() {
   testWidgets('App shows onboarding on first launch', (WidgetTester tester) async {
@@ -41,8 +42,8 @@ void main() {
     // tab was removed from the primary app experience.
     expect(find.text('GST Calculator'), findsWidgets);
     expect(find.text('Calculate'), findsWidgets);
-    expect(find.byIcon(Icons.history_outlined), findsOneWidget);
-    expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
+    expect(find.byIcon(LucideIcons.history), findsOneWidget);
+    expect(find.byIcon(LucideIcons.settings), findsOneWidget);
     expect(find.byIcon(Icons.description_outlined), findsNothing);
     expect(find.text('Invoices'), findsNothing);
   });

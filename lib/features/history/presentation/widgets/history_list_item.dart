@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/theme_extensions.dart';
@@ -48,7 +49,7 @@ class HistoryListItem extends ConsumerWidget {
           color: theme.colorScheme.error,
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
-        child: const Icon(Icons.delete_rounded, color: Colors.white),
+        child: const Icon(LucideIcons.trash, color: Colors.white),
       ),
       confirmDismiss: (_) async {
         return await showDialog<bool>(
@@ -103,8 +104,8 @@ class HistoryListItem extends ConsumerWidget {
                     ),
                     child: Icon(
                       entry.isInclusive
-                          ? Icons.remove_circle_outline_rounded
-                          : Icons.add_circle_outline_rounded,
+                          ? LucideIcons.minusCircle
+                          : LucideIcons.plusCircle,
                       color: accent,
                       size: 21,
                     ),
@@ -151,7 +152,7 @@ class HistoryListItem extends ConsumerWidget {
 
                   const SizedBox(width: AppSpacing.sm),
                   Icon(
-                    Icons.chevron_right_rounded,
+                    LucideIcons.chevronRight,
                     size: 20,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                   ),

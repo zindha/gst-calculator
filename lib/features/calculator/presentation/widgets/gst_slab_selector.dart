@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/gst_rates.dart';
 import '../../../../core/theme/app_tokens.dart';
@@ -63,7 +64,7 @@ class _GstSlabSelectorState extends ConsumerState<GstSlabSelector> {
                       !state.isCustomSlab && state.selectedSlab == slab;
                   return BrandChip(
                     label: '${slab.toStringAsFixed(0)}%',
-                    icon: selected ? Icons.check_rounded : null,
+                    icon: selected ? LucideIcons.check : null,
                     selected: selected,
                     semanticsLabel:
                         '${slab.toStringAsFixed(0)}% GST rate'
@@ -79,7 +80,7 @@ class _GstSlabSelectorState extends ConsumerState<GstSlabSelector> {
                 label: state.isCustomSlab
                     ? '${formatRate(state.customSlabValue)}%'
                     : 'Custom',
-                icon: state.isCustomSlab ? Icons.check_rounded : Icons.edit_rounded,
+                icon: state.isCustomSlab ? LucideIcons.check : LucideIcons.pencil,
                 selected: state.isCustomSlab,
                 semanticsLabel:
                     'Custom GST rate'

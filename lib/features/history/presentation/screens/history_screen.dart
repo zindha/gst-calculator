@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/app_animations.dart';
 import '../../../../core/utils/accessibility_helper.dart';
@@ -33,7 +34,7 @@ class HistoryScreen extends ConsumerWidget {
                 // when there is nothing to export or clear, so the controls
                 // never disappear and never act on empty data.
                 A11y.iconButton(
-                  icon: Icons.file_download_outlined,
+                  icon: LucideIcons.download,
                   label: 'Export as CSV',
                   iconSize: 22,
                   onPressed:
@@ -45,7 +46,7 @@ class HistoryScreen extends ConsumerWidget {
                           },
                 ),
                 A11y.iconButton(
-                  icon: Icons.delete_sweep_outlined,
+                  icon: LucideIcons.trash,
                   label: 'Clear all history',
                   iconSize: 22,
                   onPressed:
@@ -67,7 +68,7 @@ class HistoryScreen extends ConsumerWidget {
                 child:
                     entries.isEmpty
                         ? const EmptyState(
-                          icon: Icons.history_rounded,
+                          icon: LucideIcons.history,
                           title: 'No calculations yet',
                           subtitle: 'Your saved calculations will appear here',
                         )

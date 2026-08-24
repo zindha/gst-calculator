@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/constants/gst_rates.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/app_animations.dart';
@@ -38,7 +39,7 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     SpringEntrance(
                       index: 0,
-                      child: _SectionHeader(title: 'Theme', icon: Icons.palette_rounded),
+                      child: _SectionHeader(title: 'Theme', icon: LucideIcons.palette),
                     ),
                     SpringEntrance(
                       index: 1,
@@ -47,8 +48,8 @@ class SettingsScreen extends ConsumerWidget {
                           ListTile(
                             title: const Text('Appearance'),
                             subtitle: Text(_themeLabel(settings.themeMode)),
-                            leading: const Icon(Icons.brightness_6_rounded),
-                            trailing: const Icon(Icons.chevron_right_rounded),
+                            leading: const Icon(LucideIcons.sunDim),
+                            trailing: const Icon(LucideIcons.chevronRight),
                             onTap: () => _showThemePicker(context, ref, settings),
                           ),
                         ],
@@ -58,7 +59,7 @@ class SettingsScreen extends ConsumerWidget {
 
                     SpringEntrance(
                       index: 2,
-                      child: _SectionHeader(title: 'Defaults', icon: Icons.tune_rounded),
+                      child: _SectionHeader(title: 'Defaults', icon: LucideIcons.slidersHorizontal),
                     ),
                     SpringEntrance(
                       index: 3,
@@ -67,16 +68,16 @@ class SettingsScreen extends ConsumerWidget {
                           ListTile(
                             title: const Text('Default GST Rate'),
                             subtitle: Text('${formatRate(settings.defaultSlab)}%'),
-                            leading: const Icon(Icons.percent_rounded),
-                            trailing: const Icon(Icons.chevron_right_rounded),
+                            leading: const Icon(LucideIcons.percent),
+                            trailing: const Icon(LucideIcons.chevronRight),
                             onTap: () => _showSlabPicker(context, ref, settings),
                           ),
                           const Divider(height: 1, indent: 72),
                           ListTile(
                             title: const Text('Default Tax Type'),
                             subtitle: Text(settings.defaultCalculationType.label),
-                            leading: const Icon(Icons.calculate_rounded),
-                            trailing: const Icon(Icons.chevron_right_rounded),
+                            leading: const Icon(LucideIcons.calculator),
+                            trailing: const Icon(LucideIcons.chevronRight),
                             onTap:
                                 () => _showCalcTypePicker(context, ref, settings),
                           ),
@@ -84,8 +85,8 @@ class SettingsScreen extends ConsumerWidget {
                           ListTile(
                             title: const Text('Default Transaction'),
                             subtitle: Text(settings.defaultTransactionType.label),
-                            leading: const Icon(Icons.location_city_rounded),
-                            trailing: const Icon(Icons.chevron_right_rounded),
+                            leading: const Icon(LucideIcons.building),
+                            trailing: const Icon(LucideIcons.chevronRight),
                             onTap:
                                 () =>
                                     _showTransTypePicker(context, ref, settings),
@@ -97,7 +98,7 @@ class SettingsScreen extends ConsumerWidget {
 
                     SpringEntrance(
                       index: 4,
-                      child: _SectionHeader(title: 'Data', icon: Icons.storage_rounded),
+                      child: _SectionHeader(title: 'Data', icon: LucideIcons.database),
                     ),
                     SpringEntrance(
                       index: 5,
@@ -106,8 +107,8 @@ class SettingsScreen extends ConsumerWidget {
                           ListTile(
                             title: const Text('Clear Calculation History'),
                             subtitle: Text('$historyCount entries stored'),
-                            leading: const Icon(Icons.delete_outline_rounded),
-                            trailing: const Icon(Icons.chevron_right_rounded),
+                            leading: const Icon(LucideIcons.trash),
+                            trailing: const Icon(LucideIcons.chevronRight),
                             onTap:
                                 historyCount > 0
                                     ? () => _confirmClearHistory(context, ref)
@@ -162,16 +163,16 @@ class SettingsScreen extends ConsumerWidget {
                   (mode) => ListTile(
                     leading: Icon(
                       mode == ThemeMode.system
-                          ? Icons.brightness_auto_rounded
+                          ? LucideIcons.sun
                           : mode == ThemeMode.light
-                          ? Icons.light_mode_rounded
-                          : Icons.dark_mode_rounded,
+                          ? LucideIcons.sun
+                          : LucideIcons.moon,
                     ),
                     title: Text(_themeLabel(mode)),
                     trailing:
                         mode == settings.themeMode
                             ? Icon(
-                              Icons.check,
+                              LucideIcons.check,
                               color: Theme.of(context).colorScheme.primary,
                             )
                             : null,
@@ -209,7 +210,7 @@ class SettingsScreen extends ConsumerWidget {
                     trailing:
                         slab == settings.defaultSlab
                             ? Icon(
-                              Icons.check,
+                              LucideIcons.check,
                               color: Theme.of(context).colorScheme.primary,
                             )
                             : null,
@@ -247,7 +248,7 @@ class SettingsScreen extends ConsumerWidget {
                     trailing:
                         type == settings.defaultCalculationType
                             ? Icon(
-                              Icons.check,
+                              LucideIcons.check,
                               color: Theme.of(context).colorScheme.primary,
                             )
                             : null,
@@ -287,7 +288,7 @@ class SettingsScreen extends ConsumerWidget {
                     trailing:
                         type == settings.defaultTransactionType
                             ? Icon(
-                              Icons.check,
+                              LucideIcons.check,
                               color: Theme.of(context).colorScheme.primary,
                             )
                             : null,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../theme/app_tokens.dart';
 
@@ -56,7 +57,7 @@ class EmptyState extends StatelessWidget {
               const SizedBox(height: AppSpacing.xxl),
               FilledButton.icon(
                 onPressed: onAction,
-                icon: const Icon(Icons.add_rounded),
+                icon: const Icon(LucideIcons.plus),
                 label: Text(actionLabel!),
               ),
             ],
