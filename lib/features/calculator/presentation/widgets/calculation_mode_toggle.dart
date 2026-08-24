@@ -160,12 +160,12 @@ class _SegmentedControlState extends State<SegmentedControl>
 
     // Track: subtle container that holds the sliding pill.
     final trackColor = isDark
-        ? Colors.white.withValues(alpha: 0.06)
+        ? Colors.white.withValues(alpha: 0.10)
         : Colors.black.withValues(alpha: 0.04);
 
     // Pill: the selected segment's filled background.
     final pillColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
+        ? Colors.white.withValues(alpha: 0.18)
         : Colors.white;
 
     return LayoutBuilder(

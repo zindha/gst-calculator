@@ -56,9 +56,12 @@ class _BrandChipState extends State<BrandChip> {
     final content = selected
         ? theme.colorScheme.onPrimary
         : theme.colorScheme.onSurface;
+    // In dark mode, bump border opacity so unselected chips are visible
+    // against the deep navy surface.
+    final borderOpacity = theme.brightness == Brightness.dark ? 0.8 : 0.6;
     final border = selected
         ? fill
-        : theme.colorScheme.outlineVariant.withValues(alpha: 0.6);
+        : theme.colorScheme.outlineVariant.withValues(alpha: borderOpacity);
 
     return Semantics(
       label:
