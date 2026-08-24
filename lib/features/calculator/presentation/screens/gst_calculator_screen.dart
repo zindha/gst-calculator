@@ -150,7 +150,7 @@ class _GstCalculatorScreenState extends ConsumerState<GstCalculatorScreen> {
                         ScrollViewKeyboardDismissBehavior.onDrag,
                     padding: const EdgeInsets.fromLTRB(
                       AppSpacing.xl,
-                      AppSpacing.sm,
+                      2, // Minimal top gap — content starts close to header
                       AppSpacing.xl,
                       AppSpacing.xxxl,
                     ),

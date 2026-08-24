@@ -41,7 +41,7 @@ class AppHeader extends StatelessWidget {
         : BrandColors.textPrimaryLight;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, 8, AppSpacing.md, 4),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, 8, AppSpacing.md, 0),
       child: Row(
         children: [
           if (leading != null) ...[
