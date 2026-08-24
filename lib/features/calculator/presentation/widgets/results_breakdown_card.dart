@@ -89,9 +89,11 @@ class ResultsBreakdownCard extends ConsumerWidget {
                     : (isIntraState ? '-GST · CGST + SGST' : '-GST · IGST'),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.65,
+                  ),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
