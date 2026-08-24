@@ -22,7 +22,10 @@ if (hasKeystoreConfig) {
 android {
     namespace = "com.gstcalculator.app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Pinned to 27.x: flutter_native_splash, path_provider_android, share_plus
+    // and shared_preferences_android all require NDK 27.0.12077973. The Flutter
+    // default is older and breaks the release build.
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -70,6 +73,14 @@ android {
             )
         }
     }
+}
+
+dependencies {
+    // Play Core: the Flutter engine references com.google.android.play.core.*
+    // (split-install / deferred components) classes at build time. This app
+    // doesn't use deferred components, but R8 still needs those classes on the
+    // classpath, otherwise the release build fails with "Missing classes".
+    implementation("com.google.android.play:core:1.10.3")
 }
 
 kotlin {
