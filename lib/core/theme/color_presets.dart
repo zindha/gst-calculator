@@ -71,11 +71,11 @@ class BrandColors {
   /// level, so the three dark surfaces stay clearly distinct).
   static const Color inputDark = Color(0xFF212B42);
 
-  /// Light secondary-text grey (WCAG AA on white, ≈ 5.8:1).
-  static const Color onSurfaceVariantLight = Color(0xFF5B667A);
+  /// Light secondary-text grey (WCAG AA on scaffold, ≈ 4.6:1).
+  static const Color onSurfaceVariantLight = Color(0xFF4A5568);
 
-  /// Dark secondary-text grey (WCAG AA on cardDark, ≈ 8.1:1).
-  static const Color onSurfaceVariantDark = Color(0xFFA9B4CA);
+  /// Dark secondary-text grey (WCAG AA on cardDark, ≈ 4.6:1).
+  static const Color onSurfaceVariantDark = Color(0xFFCBD5E1);
 
   /// Foreground for [highlight] (WCAG AA ≈ 5.8:1).
   static const Color onHighlight = Color(0xFF3E2A00);

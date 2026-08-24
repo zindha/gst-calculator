@@ -352,14 +352,14 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: GSTCalculatorApp()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Quick GST Calculations'), findsOneWidget);
+    expect(find.text('Instant GST Math'), findsOneWidget);
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
-    expect(find.text('Reverse GST & History'), findsOneWidget);
+    expect(find.text('Reverse & Recall'), findsOneWidget);
 
     await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
-    expect(find.text('Settings & Themes'), findsOneWidget);
+    expect(find.text('Your Way'), findsOneWidget);
     expect(find.text('Get Started'), findsOneWidget);
 
     await tester.tap(find.text('Get Started'));

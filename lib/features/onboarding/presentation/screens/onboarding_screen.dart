@@ -10,11 +10,13 @@ class _OnboardingSlide {
   final IconData icon;
   final String title;
   final String description;
+  final Color accentColor;
 
   const _OnboardingSlide({
     required this.icon,
     required this.title,
     required this.description,
+    required this.accentColor,
   });
 }
 
@@ -22,21 +24,24 @@ class _OnboardingSlide {
 const List<_OnboardingSlide> _slides = [
   _OnboardingSlide(
     icon: LucideIcons.calculator,
-    title: 'Quick GST Calculations',
+    title: 'Instant GST Math',
     description:
-        'Calculate GST instantly with live updates. Switch between Exclusive (+GST) and Inclusive (-GST) modes.',
+        'Enter an amount, pick a rate, get the breakdown. Add or remove GST in one tap — the result updates as you type.',
+    accentColor: Color(0xFF1565C0),
   ),
   _OnboardingSlide(
     icon: LucideIcons.arrowLeftRight,
-    title: 'Reverse GST & History',
+    title: 'Reverse & Recall',
     description:
-        'Reverse-calculate the base price from a gross total. Every calculation is saved to your history automatically.',
+        'Got a gross total? Reverse-calculate the base price. Every calculation is saved — tap History to revisit any time.',
+    accentColor: Color(0xFF2E7D32),
   ),
   _OnboardingSlide(
     icon: LucideIcons.palette,
-    title: 'Settings & Themes',
+    title: 'Your Way',
     description:
-        'Pick a theme and set your default rate, tax type, and transaction type.',
+        'Set your default rate, tax type, and transaction. Switch between light and dark. The app adapts to how you work.',
+    accentColor: Color(0xFF6A1B9A),
   ),
 ];
 
@@ -104,9 +109,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   final slide = _slides[index];
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),
-                    // Content stays centered when there is room, but scrolls
-                    // instead of overflowing on short screens or at large
-                    // system font scales.
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         return SingleChildScrollView(
@@ -118,24 +120,39 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // A quiet icon accent — no tinted circle, no
-                                  // illustration. The text carries the slide.
-                                  Icon(slide.icon, size: 32, color: primary),
-                                  const SizedBox(height: AppSpacing.lg),
+                                  // Icon inside a soft colored container —
+                                  // gives each slide its own visual identity.
+                                  Container(
+                                    width: 72,
+                                    height: 72,
+                                    decoration: BoxDecoration(
+                                      color: slide.accentColor.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Icon(
+                                      slide.icon,
+                                      size: 32,
+                                      color: slide.accentColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppSpacing.xxl),
                                   Text(
                                     slide.title,
                                     textAlign: TextAlign.center,
                                     style: theme.textTheme.headlineSmall
-                                        ?.copyWith(fontWeight: FontWeight.w700),
+                                        ?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: -0.3,
+                                    ),
                                   ),
-                                  const SizedBox(height: AppSpacing.sm),
+                                  const SizedBox(height: AppSpacing.md),
                                   Text(
                                     slide.description,
                                     textAlign: TextAlign.center,
                                     style: theme.textTheme.bodyLarge?.copyWith(
                                       color: theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.7),
-                                      height: 1.4,
+                                          .withValues(alpha: 0.65),
+                                      height: 1.5,
                                     ),
                                   ),
                                 ],

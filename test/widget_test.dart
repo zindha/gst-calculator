@@ -14,7 +14,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // On first launch, the onboarding screen should be shown
-    expect(find.text('Quick GST Calculations'), findsOneWidget);
+    expect(find.text('Instant GST Math'), findsOneWidget);
     expect(find.text('Skip'), findsOneWidget);
     // First slide shows "Next" not "Get Started"
     expect(find.text('Next'), findsOneWidget);

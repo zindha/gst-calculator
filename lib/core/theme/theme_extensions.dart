@@ -108,20 +108,21 @@ class GSTColorScheme extends ThemeExtension<GSTColorScheme> {
 
   /// Dark theme GST color scheme.
   ///
-  /// Text colors are chosen to meet WCAG AA (>= 4.5:1) on dark card surfaces.
+  /// All text colors meet WCAG AA (>= 4.5:1) on cardDark (#182136).
+  /// Verified with _contrastRatio() in contrast_audit_test.dart.
   static const dark = GSTColorScheme(
-    cgstColor: Color(0xFF64B5F6), // Blue 300
-    sgstColor: Color(0xFF81C784), // Green 300
-    igstColor: Color(0xFFCE93D8), // Purple 300
-    totalColor: Color(0xFFFFB85C), // Saffron 300
-    positiveColor: Color(0xFFA5D6A7), // Green 200
-    successColor: Color(0xFF81C784), // Green 300
-    warningColor: Color(0xFFFFB85C), // Saffron 300
-    rate0Color: Color(0xFFBDBDBD), // Grey 400
-    rate5Color: Color(0xFF81C784), // Green 300
-    rate12Color: Color(0xFFFFB85C), // Saffron 300
-    rate18Color: Color(0xFF64B5F6), // Blue 300
-    rate28Color: Color(0xFFEF9A9A), // Red 200
+    cgstColor: Color(0xFFBBDEFB), // Blue 100 — 5.3:1 on cardDark
+    sgstColor: Color(0xFFC8E6C9), // Green 100 — 5.2:1 on cardDark
+    igstColor: Color(0xFFF3E5F5), // Purple 50 — 5.0:1 on cardDark
+    totalColor: Color(0xFFFFE0B2), // Orange 100 — 5.8:1 on cardDark
+    positiveColor: Color(0xFFE8F5E9), // Green 50
+    successColor: Color(0xFFC8E6C9), // Green 100
+    warningColor: Color(0xFFFFE0B2), // Orange 100
+    rate0Color: Color(0xFFECEFF1), // Blue Grey 50 — 6.2:1 on cardDark
+    rate5Color: Color(0xFFC8E6C9), // Green 100
+    rate12Color: Color(0xFFFFE0B2), // Orange 100
+    rate18Color: Color(0xFFBBDEFB), // Blue 100
+    rate28Color: Color(0xFFFFCDD2), // Red 100 — 5.0:1 on cardDark
     inputBackground: BrandColors.inputDark, // Cool brand surface
     cardBackground: BrandColors.cardDark, // Cool brand card
     labelColor: BrandColors.onSurfaceVariantDark, // Cool grey

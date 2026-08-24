@@ -191,20 +191,20 @@ void main() {
       await tester.pumpAndSettle();
 
       // First slide
-      expect(find.text('Quick GST Calculations'), findsOneWidget);
+      expect(find.text('Instant GST Math'), findsOneWidget);
       expect(find.text('Next'), findsOneWidget);
 
       await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
 
       // Second slide
-      expect(find.text('Reverse GST & History'), findsOneWidget);
+      expect(find.text('Reverse & Recall'), findsOneWidget);
 
       await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
 
       // Third slide
-      expect(find.text('Settings & Themes'), findsOneWidget);
+      expect(find.text('Your Way'), findsOneWidget);
       expect(find.text('Get Started'), findsOneWidget);
 
       await tester.tap(find.text('Get Started'));
