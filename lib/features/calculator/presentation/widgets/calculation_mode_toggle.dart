@@ -161,7 +161,7 @@ class _SegmentedControlState extends State<SegmentedControl>
     // Track: subtle container that holds the sliding pill.
     final trackColor = isDark
         ? Colors.white.withValues(alpha: 0.10)
-        : Colors.black.withValues(alpha: 0.04);
+        : Colors.black.withValues(alpha: 0.06);
 
     // Pill: the selected segment's filled background.
     final pillColor = isDark
@@ -202,10 +202,18 @@ class _SegmentedControlState extends State<SegmentedControl>
                         decoration: BoxDecoration(
                           color: pillColor,
                           borderRadius: BorderRadius.circular(pillRadius),
+                          // In light mode, a subtle border lifts the white pill
+                          // off the light surface; in dark mode the shadow alone
+                          // provides enough separation.
+                          border: isDark
+                              ? null
+                              : Border.all(
+                                  color: Colors.black.withValues(alpha: 0.08),
+                                ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 4,
+                              color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.08),
+                              blurRadius: isDark ? 6 : 4,
                               offset: const Offset(0, 1),
                             ),
                           ],
