@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/theme/app_tokens.dart';
-import '../../../../core/theme/app_animations.dart';
 import '../../../../core/widgets/section_label.dart';
 import '../../domain/entities/gst_calculation_type.dart';
 import '../../domain/entities/gst_transaction_type.dart';
@@ -12,6 +11,10 @@ import '../providers/gst_calculator_notifier.dart';
 
 /// Calculation mode controls: the primary "Add GST / Remove GST" selector and
 /// the quieter "Intra-State / Inter-State" transaction selector.
+///
+/// Both controls use the same selection language as the GST rate chips:
+/// selected = blue fill + white text + checkmark, unselected = transparent
+/// + muted text + subtle border. One glance tells you what's active.
 class CalculationModeToggle extends ConsumerWidget {
   const CalculationModeToggle({super.key});
 
@@ -29,50 +32,81 @@ class CalculationModeToggle extends ConsumerWidget {
         const SizedBox(height: AppSpacing.sm),
         Semantics(
           label: 'Calculation mode. Current: ${state.calculationType.label}',
-          child: SegmentedControl(
-            options: const [
-              SegmentOption(
-                label: 'Add GST',
-                icon: LucideIcons.plusCircle,
+          child: Row(
+            children: [
+              Expanded(
+                child: _ModeChip(
+                  label: 'Add GST',
+                  icon: LucideIcons.plusCircle,
+                  selected: isExclusive,
+                  onTap: () {
+                    if (!isExclusive) {
+                      HapticFeedback.selectionClick();
+                      ref
+                          .read(gstCalculatorProvider.notifier)
+                          .toggleCalculationType();
+                    }
+                  },
+                ),
               ),
-              SegmentOption(
-                label: 'Remove GST',
-                icon: LucideIcons.minusCircle,
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _ModeChip(
+                  label: 'Remove GST',
+                  icon: LucideIcons.minusCircle,
+                  selected: !isExclusive,
+                  onTap: () {
+                    if (isExclusive) {
+                      HapticFeedback.selectionClick();
+                      ref
+                          .read(gstCalculatorProvider.notifier)
+                          .toggleCalculationType();
+                    }
+                  },
+                ),
               ),
             ],
-            selectedIndex: isExclusive ? 0 : 1,
-            onSelected: (index) {
-              if (index == 0 && !isExclusive || index == 1 && isExclusive) {
-                HapticFeedback.selectionClick();
-                ref
-                    .read(gstCalculatorProvider.notifier)
-                    .toggleCalculationType();
-              }
-            },
-            emphasized: true,
           ),
         ),
-        const SizedBox(height: AppSpacing.xs),
+        const SizedBox(height: AppSpacing.section),
+        const SectionLabel('TAX TYPE'),
+        const SizedBox(height: AppSpacing.sm),
         Semantics(
           label: 'Transaction type. Current: ${state.transactionType.label}',
-          child: SegmentedControl(
-            options: const [
-              SegmentOption(
-                label: 'Intra-State',
-                icon: LucideIcons.building,
+          child: Row(
+            children: [
+              Expanded(
+                child: _ModeChip(
+                  label: 'Intra-State',
+                  icon: LucideIcons.building,
+                  selected: isIntraState,
+                  onTap: () {
+                    if (!isIntraState) {
+                      HapticFeedback.selectionClick();
+                      ref
+                          .read(gstCalculatorProvider.notifier)
+                          .toggleTransactionType();
+                    }
+                  },
+                ),
               ),
-              SegmentOption(label: 'Inter-State', icon: LucideIcons.globe),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _ModeChip(
+                  label: 'Inter-State',
+                  icon: LucideIcons.globe,
+                  selected: !isIntraState,
+                  onTap: () {
+                    if (isIntraState) {
+                      HapticFeedback.selectionClick();
+                      ref
+                          .read(gstCalculatorProvider.notifier)
+                          .toggleTransactionType();
+                    }
+                  },
+                ),
+              ),
             ],
-            selectedIndex: isIntraState ? 0 : 1,
-            onSelected: (index) {
-              if (index == 0 && !isIntraState || index == 1 && isIntraState) {
-                HapticFeedback.selectionClick();
-                ref
-                    .read(gstCalculatorProvider.notifier)
-                    .toggleTransactionType();
-              }
-            },
-            emphasized: false,
           ),
         ),
       ],
@@ -80,206 +114,99 @@ class CalculationModeToggle extends ConsumerWidget {
   }
 }
 
-class SegmentOption {
+/// A single selection chip that matches the GST rate chip visual language.
+///
+/// Selected: blue fill + white text + checkmark.
+/// Unselected: transparent + muted text + subtle border.
+/// One glance tells you what's active — no decoding required.
+class _ModeChip extends StatelessWidget {
   final String label;
   final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
 
-  const SegmentOption({required this.label, required this.icon});
-}
-
-/// A two-option segmented selector with a sliding background pill.
-///
-/// Selection is communicated through a filled container behind the active
-/// segment plus bold typography — unmistakable, not just a colour shift.
-/// [emphasized] picks the size: a taller, bolder primary control versus a
-/// compact secondary one. Each segment is a full-height, full-width touch
-/// target, not just its label.
-class SegmentedControl extends StatefulWidget {
-  final List<SegmentOption> options;
-  final int selectedIndex;
-  final ValueChanged<int> onSelected;
-  final bool emphasized;
-
-  const SegmentedControl({
-    super.key,
-    required this.options,
-    required this.selectedIndex,
-    required this.onSelected,
-    required this.emphasized,
+  const _ModeChip({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
   });
-
-  @override
-  State<SegmentedControl> createState() => _SegmentedControlState();
-}
-
-class _SegmentedControlState extends State<SegmentedControl>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pillController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pillController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250),
-    );
-    // Start at the selected position (no animation on first build).
-    _pillController.value = widget.selectedIndex == 0 ? 0.0 : 1.0;
-  }
-
-  @override
-  void didUpdateWidget(SegmentedControl oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.selectedIndex != oldWidget.selectedIndex) {
-      final target = widget.selectedIndex == 0 ? 0.0 : 1.0;
-      // Spring the pill to the new position.
-      final sim = AppSpring.medium.toSimulation(
-        from: _pillController.value,
-        to: target,
-        velocity: _pillController.velocity,
-      );
-      _pillController.animateWith(sim);
-    }
-  }
-
-  @override
-  void dispose() {
-    _pillController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Minimum 44px touch target for both variants.
-    final height = widget.emphasized ? 46.0 : 44.0;
-    final labelSize = widget.emphasized ? 14.0 : 13.0;
-    final iconSize = widget.emphasized ? 17.0 : 16.0;
+    // Selection language: identical to the GST rate chips.
+    final fill = selected ? theme.colorScheme.primary : Colors.transparent;
+    final content = selected
+        ? theme.colorScheme.onPrimary
+        : theme.colorScheme.onSurfaceVariant;
+    final borderOpacity = isDark ? 0.8 : 0.6;
+    final border = selected
+        ? fill
+        : theme.colorScheme.outlineVariant.withValues(alpha: borderOpacity);
 
-    // Track: subtle container that holds the sliding pill.
-    final trackColor = isDark
-        ? Colors.white.withValues(alpha: 0.10)
-        : Colors.black.withValues(alpha: 0.06);
-
-    // Pill: the selected segment's filled background.
-    final pillColor = isDark
-        ? Colors.white.withValues(alpha: 0.18)
-        : Colors.white;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final segmentWidth = constraints.maxWidth / widget.options.length;
-        final pillRadius = AppRadius.sm;
-
-        return SizedBox(
-          height: height,
-          child: AnimatedBuilder(
-            animation: _pillController,
-            builder: (context, _) {
-              // Interpolate pill position: 0.0 = left segment, 1.0 = right.
-              final pillX = _pillController.value * segmentWidth;
-
-              return Container(
-                decoration: BoxDecoration(
-                  color: trackColor,
-                  borderRadius: BorderRadius.circular(pillRadius + 2),
-                ),
-                padding: const EdgeInsets.all(2),
-                child: Stack(
-                  children: [
-                    // Sliding pill — spring-driven background behind the
-                    // selected segment.
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOutCubic,
-                      left: pillX,
-                      top: 0,
-                      width: segmentWidth,
-                      height: height - 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: pillColor,
-                          borderRadius: BorderRadius.circular(pillRadius),
-                          // In light mode, a subtle border lifts the white pill
-                          // off the light surface; in dark mode the shadow alone
-                          // provides enough separation.
-                          border: isDark
-                              ? null
-                              : Border.all(
-                                  color: Colors.black.withValues(alpha: 0.08),
-                                ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.08),
-                              blurRadius: isDark ? 6 : 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Segments.
-                    Positioned.fill(
-                      child: Row(
-                        children: List.generate(widget.options.length, (i) {
-                          final selected = i == widget.selectedIndex;
-                          final contentColor = selected
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurfaceVariant;
-                          return Expanded(
-                            child: Semantics(
-                              label: widget.options[i].label,
-                              selected: selected,
-                              button: true,
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () => widget.onSelected(i),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        widget.options[i].icon,
-                                        size: iconSize,
-                                        color: contentColor,
-                                      ),
-                                      const SizedBox(width: AppSpacing.sm),
-                                      Flexible(
-                                        child: FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          child: Text(
-                                            widget.options[i].label,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              fontFamily: 'Manrope',
-                                              fontSize: labelSize,
-                                              height: 1.2,
-                                              fontWeight: selected
-                                                  ? FontWeight.w700
-                                                  : FontWeight.w500,
-                                              color: contentColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
+    return Semantics(
+      label: '$label${selected ? ', selected' : ''}',
+      selected: selected,
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: 12,
           ),
-        );
-      },
+          decoration: BoxDecoration(
+            color: fill,
+            borderRadius: BorderRadius.circular(AppRadius.sm),
+            border: Border.all(color: border, width: 1),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Checkmark when selected, original icon when not.
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 150),
+                  child: Icon(
+                    selected ? LucideIcons.check : icon,
+                    key: ValueKey(selected),
+                    size: 16,
+                    color: content,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontFamily: 'Manrope',
+                      fontSize: 14,
+                      fontWeight: selected
+                          ? FontWeight.w700
+                          : FontWeight.w600,
+                      height: 1.2,
+                      color: content,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

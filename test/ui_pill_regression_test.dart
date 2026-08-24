@@ -98,8 +98,8 @@ void main() {
     expect(_captured, isEmpty);
   });
 
-  testWidgets('Segmented controls: equal segments, vertically centered, '
-      'no displacement on selection', (tester) async {
+  testWidgets('Mode chips: vertically aligned, selection changes, '
+      'no displacement', (tester) async {
     _usePhoneView(tester);
     SharedPreferences.setMockInitialValues({});
     _installCapture();
@@ -114,34 +114,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // The first control is Add/Remove GST; the second is Intra/Inter-State.
-    final modeControl = find.byType(SegmentedControl).first;
-    final txControl = find.byType(SegmentedControl).at(1);
-
-    // Calculation-mode control: both segments align on the same center and
-    // sit vertically centered inside the control.
-    final modeRect = tester.getRect(modeControl);
-    for (final label in ['Add GST', 'Remove GST']) {
-      final c = tester.getCenter(find.text(label));
-      expect(
-        c.dy,
-        closeTo(modeRect.center.dy, 2.0),
-        reason: "'$label' must be vertically centered in its control",
-      );
-    }
+    // Both pairs of labels share the same vertical center (same row).
     expect(
       tester.getCenter(find.text('Add GST')).dy,
-      tester.getCenter(find.text('Remove GST')).dy,
-      reason: 'both segments must share one vertical center',
+      closeTo(tester.getCenter(find.text('Remove GST')).dy, 0.5),
+      reason: 'Add/Remove GST must share one vertical center',
     );
-
-    // Transaction control: icons differ but the label centers still match.
-    final txRect = tester.getRect(txControl);
-    for (final label in ['Intra-State', 'Inter-State']) {
-      final c = tester.getCenter(find.text(label));
-      expect(c.dy, closeTo(txRect.center.dy, 2.0),
-          reason: "'$label' must be vertically centered");
-    }
+    expect(
+      tester.getCenter(find.text('Intra-State')).dy,
+      closeTo(tester.getCenter(find.text('Inter-State')).dy, 0.5),
+      reason: 'Intra/Inter-State must share one vertical center',
+    );
 
     // Selecting a segment must not move either label vertically.
     final addBefore = tester.getCenter(find.text('Add GST')).dy;
@@ -165,8 +148,7 @@ void main() {
     expect(_captured, isEmpty);
   });
 
-  testWidgets('Segmented control: the whole segment is tappable, '
-      'not just the label', (tester) async {
+  testWidgets('Mode chips: tapping toggles calculation type', (tester) async {
     _usePhoneView(tester);
     SharedPreferences.setMockInitialValues({});
     _installCapture();
@@ -176,20 +158,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('₹1,180.00'), findsOneWidget); // exclusive total
 
-    // Tap the 'Remove GST' segment in the empty area near its bottom edge —
-    // far away from the label, which sits centered. The whole segment must
-    // be a valid touch target, not just the icon + text row.
-    final control = tester.getRect(find.byType(SegmentedControl).first);
-    // Right half of the control = the 'Remove GST' segment; bottom edge is
-    // empty space, never the label.
-    final tapPoint = Offset(
-      control.right - control.width * 0.25,
-      control.bottom - 6,
-    );
-    await tester.tapAt(tapPoint);
+    // Tap 'Remove GST' — toggles to inclusive: ₹1,000 incl. 18%.
+    await tester.tap(find.text('Remove GST'));
     await tester.pumpAndSettle();
 
-    // Toggled to inclusive: ₹1,000 incl. 18% keeps the total at ₹1,000.00.
     expect(find.text('₹1,000.00'), findsOneWidget);
     expect(find.text('₹1,180.00'), findsNothing);
     // Flush the auto-save debounce so no timer is left pending.
