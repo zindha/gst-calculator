@@ -9,6 +9,7 @@ import '../../../../core/theme/theme_extensions.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/utils/gst_math.dart';
 import '../../../../core/utils/money.dart';
+import '../../../../core/utils/rate_formatter.dart';
 import '../../domain/entities/gst_calculation_type.dart';
 import '../../domain/entities/gst_calculator_state.dart';
 import '../../domain/entities/gst_transaction_type.dart';
@@ -193,35 +194,24 @@ class ResultsBreakdownCard extends ConsumerWidget {
         const SizedBox(height: AppSpacing.md),
         if (isIntraState) ...[
           _BreakdownRow(
-            label: 'CGST @ ${_formatRate(result.rate / 2)}%',
+            label: 'CGST @ ${formatRate(result.rate / 2)}%',
             value: CurrencyFormatter.format(breakdown.cgst),
             color: gstColors.cgstColor,
           ),
           const SizedBox(height: AppSpacing.sm),
           _BreakdownRow(
-            label: 'SGST @ ${_formatRate(result.rate / 2)}%',
+            label: 'SGST @ ${formatRate(result.rate / 2)}%',
             value: CurrencyFormatter.format(breakdown.sgst),
             color: gstColors.sgstColor,
           ),
         ] else
           _BreakdownRow(
-            label: 'IGST @ ${_formatRate(result.rate)}%',
+            label: 'IGST @ ${formatRate(result.rate)}%',
             value: CurrencyFormatter.format(breakdown.igst),
             color: gstColors.igstColor,
           ),
       ],
     );
-  }
-
-  static String _formatRate(double rate) {
-    if (rate == rate.roundToDouble()) {
-      return rate.toStringAsFixed(0);
-    }
-    var text = rate.toStringAsFixed(2).replaceFirst(RegExp(r'0+$'), '');
-    if (text.endsWith('.')) {
-      text = text.substring(0, text.length - 1);
-    }
-    return text;
   }
 
   Widget _buildEmptyState(ThemeData theme) {

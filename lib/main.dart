@@ -4,12 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
+import 'features/settings/presentation/providers/settings_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Ensure SharedPreferences is initialized before the app starts
-  await SharedPreferences.getInstance();
+  // Ensure SharedPreferences is initialized before the app starts, and hand
+  // the cached instance to SettingsNotifier so saved settings (theme, slab,
+  // modes) render on the first frame instead of flashing the defaults.
+  final prefs = await SharedPreferences.getInstance();
+  attachSharedPreferences(prefs);
 
   // Set default locale for Indian Rupee formatting
   Intl.defaultLocale = 'en_IN';

@@ -9,6 +9,7 @@ import '../../../../core/utils/accessibility_helper.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/utils/gst_math.dart';
 import '../../../../core/utils/money.dart';
+import '../../../../core/utils/rate_formatter.dart';
 import '../../domain/entities/gst_calculator_state.dart';
 import '../../domain/entities/gst_transaction_type.dart';
 import '../providers/gst_calculator_notifier.dart';
@@ -123,19 +124,19 @@ class QuickActionsBar extends ConsumerWidget {
         'Base Amount: ${CurrencyFormatter.format(breakdown.base)}',
       );
     }
-    buffer.writeln('Rate: ${result.rate}%');
+    buffer.writeln('Rate: ${formatRate(result.rate)}%');
     if (isIntraState) {
       buffer.writeln(
-        'CGST (${result.rate / 2}%): '
+        'CGST (${formatRate(result.rate / 2)}%): '
         '${CurrencyFormatter.format(breakdown.cgst)}',
       );
       buffer.writeln(
-        'SGST (${result.rate / 2}%): '
+        'SGST (${formatRate(result.rate / 2)}%): '
         '${CurrencyFormatter.format(breakdown.sgst)}',
       );
     } else {
       buffer.writeln(
-        'IGST (${result.rate}%): ${CurrencyFormatter.format(breakdown.igst)}',
+        'IGST (${formatRate(result.rate)}%): ${CurrencyFormatter.format(breakdown.igst)}',
       );
     }
     buffer.writeln('-' * 24);

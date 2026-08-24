@@ -21,7 +21,9 @@ void main() {
       test('exclusive shows total amount', () {
         final s = entry.summary;
         expect(s, contains('₹1,180.00'));
-        expect(s, contains('@ 18.0%'));
+        // formatRate renders whole-number slabs without a decimal (18, not
+        // 18.0) — same convention as every other rate label in the app.
+        expect(s, contains('@ 18%'));
       });
 
       test('inclusive shows base amount', () {

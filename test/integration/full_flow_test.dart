@@ -73,6 +73,30 @@ void main() {
       expect(find.text('₹708.00'), findsOneWidget);
     });
 
+    testWidgets('0% and 0.25% slabs: nil-rated and rough-diamond math', (
+      tester,
+    ) async {
+      _usePhoneView(tester);
+      SharedPreferences.setMockInitialValues({});
+      await _skipOnboarding(tester);
+
+      // 0% slab (nil-rated): no GST — base and total are identical.
+      await tester.enterText(find.byType(TextField).first, '1000');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('0%'));
+      await tester.pumpAndSettle();
+      expect(find.text('₹1,000.00'), findsNWidgets(2)); // base + total
+      expect(find.text('GST'), findsOneWidget);
+
+      // 0.25% slab (rough diamonds): ₹1,000 + 0.25% = ₹1,002.50, and the
+      // split labels show the exact half rate (0.125%), not a rounded 0.13%.
+      await tester.tap(find.text('0.25%'));
+      await tester.pumpAndSettle();
+      expect(find.text('₹1,002.50'), findsOneWidget);
+      expect(find.text('CGST @ 0.125%'), findsOneWidget);
+      expect(find.text('SGST @ 0.125%'), findsOneWidget);
+    });
+
     testWidgets('clear amount resets result', (tester) async {
       _usePhoneView(tester);
       SharedPreferences.setMockInitialValues({});

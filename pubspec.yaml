@@ -34,17 +34,11 @@ flutter:
 
 flutter_launcher_icons:
   android: true
-  ios: true
-  web:
-    generate: true
-    image_path: "app-icon.png"
   image_path: "app-icon.png"
   # Navy matches the icon's own background so the transparent corners blend
-  # seamlessly on adaptive Android icons and flattened iOS icons.
+  # seamlessly on adaptive Android icons.
   adaptive_icon_background: "#002162"
   adaptive_icon_foreground: "app-icon.png"
-  background_color_ios: "#002162"
-  remove_alpha_ios: true
 
 flutter_native_splash:
   # Brand navy — matches the adaptive-icon background, so the splash reads
@@ -52,4 +46,3 @@ flutter_native_splash:
   color: "#002162"
   image: assets/icon/splash_logo.png
   android: true
-  ios: true

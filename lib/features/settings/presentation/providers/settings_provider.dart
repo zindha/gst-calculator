@@ -63,16 +63,34 @@ final settingsProvider = NotifierProvider<SettingsNotifier, AppSettings>(
   SettingsNotifier.new,
 );
 
+/// Eagerly-loaded SharedPreferences instance, attached from main() before
+/// runApp so the first build() can read saved settings synchronously — no
+/// flash of defaults (theme, slab, modes) on startup. Null in widget tests,
+/// which fall back to the async load path.
+SharedPreferences? _prefsCache;
+
+/// Attaches the [SharedPreferences] instance loaded in main() before runApp.
+void attachSharedPreferences(SharedPreferences prefs) => _prefsCache = prefs;
+
 class SettingsNotifier extends Notifier<AppSettings> {
   @override
   AppSettings build() {
+    final prefs = _prefsCache;
+    if (prefs != null) {
+      // Synchronous first build: saved settings are visible on frame one.
+      return _readFrom(prefs);
+    }
+    // No eager instance (e.g. widget tests): load asynchronously.
     _loadFromPrefs();
     return const AppSettings();
   }
 
   Future<void> _loadFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
+    state = _readFrom(prefs);
+  }
 
+  AppSettings _readFrom(SharedPreferences prefs) {
     final themeModeIndex = prefs.getInt(_PrefKeys.themeMode) ?? 0;
     final themeMode = ThemeMode.values[themeModeIndex.clamp(0, 2)];
 
@@ -81,7 +99,7 @@ class SettingsNotifier extends Notifier<AppSettings> {
     final transTypeIndex = prefs.getInt(_PrefKeys.defaultTransType) ?? 0;
     final onboardingDone = prefs.getBool(_PrefKeys.onboardingDone) ?? false;
 
-    state = AppSettings(
+    return AppSettings(
       themeMode: themeMode,
       defaultSlab: slab,
       defaultCalculationType:
@@ -130,11 +148,5 @@ class SettingsNotifier extends Notifier<AppSettings> {
   Future<void> markOnboardingDone() async {
     state = state.copyWith(onboardingDone: true);
     await _save(_PrefKeys.onboardingDone, true);
-  }
-
-  Future<void> resetAllSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    state = const AppSettings();
   }
 }

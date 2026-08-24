@@ -149,41 +149,46 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder:
           (ctx) => SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text(
-                    'Appearance',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                  ),
-                ),
-                ...ThemeMode.values.map(
-                  (mode) => ListTile(
-                    leading: Icon(
-                      mode == ThemeMode.system
-                          ? LucideIcons.sun
-                          : mode == ThemeMode.light
-                          ? LucideIcons.sun
-                          : LucideIcons.moon,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16, bottom: 8),
+                    child: Text(
+                      'Appearance',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
                     ),
-                    title: Text(_themeLabel(mode)),
-                    trailing:
-                        mode == settings.themeMode
-                            ? Icon(
-                              LucideIcons.check,
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                            : null,
-                    onTap: () {
-                      ref.read(settingsProvider.notifier).setThemeMode(mode);
-                      Navigator.pop(ctx);
-                    },
                   ),
-                ),
-                const SizedBox(height: 8),
-              ],
+                  ...ThemeMode.values.map(
+                    (mode) => ListTile(
+                      leading: Icon(
+                        mode == ThemeMode.system
+                            ? LucideIcons.sun
+                            : mode == ThemeMode.light
+                            ? LucideIcons.sun
+                            : LucideIcons.moon,
+                      ),
+                      title: Text(_themeLabel(mode)),
+                      trailing:
+                          mode == settings.themeMode
+                              ? Icon(
+                                LucideIcons.check,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                              : null,
+                      onTap: () {
+                        ref.read(settingsProvider.notifier).setThemeMode(mode);
+                        Navigator.pop(ctx);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
           ),
     );
@@ -194,34 +199,41 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder:
           (ctx) => SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text(
-                    'Default GST Rate',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            // Scrollable: all seven GST slabs would otherwise overflow the
+            // sheet on short screens.
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16, bottom: 8),
+                    child: Text(
+                      'Default GST Rate',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
-                ),
-                ...GstRates.standardSlabs.map(
-                  (slab) => ListTile(
-                    title: Text('${formatRate(slab)}%'),
-                    trailing:
-                        slab == settings.defaultSlab
-                            ? Icon(
-                              LucideIcons.check,
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                            : null,
-                    onTap: () {
-                      ref.read(settingsProvider.notifier).setDefaultSlab(slab);
-                      Navigator.pop(ctx);
-                    },
+                  ...GstRates.standardSlabs.map(
+                    (slab) => ListTile(
+                      title: Text('${formatRate(slab)}%'),
+                      trailing:
+                          slab == settings.defaultSlab
+                              ? Icon(
+                                LucideIcons.check,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                              : null,
+                      onTap: () {
+                        ref.read(settingsProvider.notifier).setDefaultSlab(slab);
+                        Navigator.pop(ctx);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-              ],
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
           ),
     );
@@ -232,36 +244,41 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder:
           (ctx) => SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text(
-                    'Default Tax Type',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16, bottom: 8),
+                    child: Text(
+                      'Default Tax Type',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
-                ),
-                ...GstCalculationType.values.map(
-                  (type) => ListTile(
-                    title: Text(type.label),
-                    trailing:
-                        type == settings.defaultCalculationType
-                            ? Icon(
-                              LucideIcons.check,
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                            : null,
-                    onTap: () {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setDefaultCalculationType(type);
-                      Navigator.pop(ctx);
-                    },
+                  ...GstCalculationType.values.map(
+                    (type) => ListTile(
+                      title: Text(type.label),
+                      trailing:
+                          type == settings.defaultCalculationType
+                              ? Icon(
+                                LucideIcons.check,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                              : null,
+                      onTap: () {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setDefaultCalculationType(type);
+                        Navigator.pop(ctx);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-              ],
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
           ),
     );
@@ -272,36 +289,41 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder:
           (ctx) => SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text(
-                    'Default Transaction',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16, bottom: 8),
+                    child: Text(
+                      'Default Transaction',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
-                ),
-                ...GstTransactionType.values.map(
-                  (type) => ListTile(
-                    title: Text(type.label),
-                    trailing:
-                        type == settings.defaultTransactionType
-                            ? Icon(
-                              LucideIcons.check,
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                            : null,
-                    onTap: () {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setDefaultTransactionType(type);
-                      Navigator.pop(ctx);
-                    },
+                  ...GstTransactionType.values.map(
+                    (type) => ListTile(
+                      title: Text(type.label),
+                      trailing:
+                          type == settings.defaultTransactionType
+                              ? Icon(
+                                LucideIcons.check,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                              : null,
+                      onTap: () {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setDefaultTransactionType(type);
+                        Navigator.pop(ctx);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-              ],
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
           ),
     );

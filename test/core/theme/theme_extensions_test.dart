@@ -42,6 +42,8 @@ void main() {
       test('returns correct color for each standard rate', () {
         const scheme = GSTColorScheme.light;
         expect(scheme.rateColor(0), scheme.rate0Color);
+        expect(scheme.rateColor(0.25), scheme.rate0Color);
+        expect(scheme.rateColor(3), scheme.rate5Color);
         expect(scheme.rateColor(5), scheme.rate5Color);
         expect(scheme.rateColor(12), scheme.rate12Color);
         expect(scheme.rateColor(18), scheme.rate18Color);

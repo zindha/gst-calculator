@@ -32,7 +32,7 @@ update your row when done.
 | 007  | Restore the web build (remove `dart:io` from shared paths) | P2 | M | — | DONE |
 | 008  | Stabilize invoice-editor text controllers | P2 | M | — | SUPERSEDED (invoice removed in 011) |
 | 009  | PDF "amount in words": paise + crore support | P2 | S | 001 | SUPERSEDED (invoice removed in 011) |
-| 010  | Ship documented 0% / 0.25% GST slabs + fix rate badge map | P2 | S | 002 | TODO |
+| 010  | Ship documented 0% / 0.25% GST slabs + fix rate badge map | P2 | S | 002 | DONE (2026-08-24; HSN-filter parts n/a — hsn_lookup was removed in 011) |
 | 011  | Premium UI/UX refinement, simplification & motion pass | P2 | M | — | DONE |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (with one-line reason) |
@@ -49,6 +49,17 @@ REJECTED (with one-line rationale) | SUPERSEDED (with one-line reason).
   `0.25%` everywhere); 002 introduces the shared rate formatter 010 reuses.
 - All other plans are independent and can be executed in any order after their
   dependencies.
+
+## Session update (2026-08-24)
+
+Scope correction: the app is **Android-only**. The `web/` and `ios/` platform
+folders, their pubspec config, and README references were removed; the
+`dart:io` deep-link handler (inert on Android — no native handler or intent
+filter) was removed with them. Also landed: history delete/clear now
+serialize through the write queue (no resurrected entries), the dead
+`resetAllSettings` (which called `prefs.clear()`) was deleted, and settings
+load synchronously on startup via the prefs instance cached in `main()` so
+the theme no longer flashes.
 
 ## Not audited / limitations
 

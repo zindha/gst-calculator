@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 ///
 /// Every colour here is sourced from the actual launcher-icon artwork
 /// (`app-icon.png`, 1195×1195 — the single image `flutter_launcher_icons`
-/// uses to generate the Android/iOS/web launcher icons), or derived from it:
+/// uses to generate the Android launcher icons), or derived from it:
 ///
 /// | Token            | Value     | Source                                                            |
 /// |------------------|-----------|-------------------------------------------------------------------|

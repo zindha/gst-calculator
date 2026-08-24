@@ -4,7 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
 import 'core/utils/accessibility_helper.dart';
-import 'core/utils/deep_link_handler.dart';
 import 'features/calculator/presentation/screens/gst_calculator_screen.dart';
 import 'features/history/presentation/screens/history_screen.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -30,57 +29,21 @@ class GSTCalculatorApp extends ConsumerWidget {
   }
 }
 
-class _AppEntry extends ConsumerStatefulWidget {
+class _AppEntry extends ConsumerWidget {
   const _AppEntry();
 
   @override
-  ConsumerState<_AppEntry> createState() => _AppEntryState();
-}
-
-class _AppEntryState extends ConsumerState<_AppEntry> {
-  DeepLinkParams? _deepLink;
-
-  @override
-  void initState() {
-    super.initState();
-    // Fire-and-forget: load deep link params in the background.
-    // Never block the UI — if the MethodChannel call hangs or fails,
-    // the app still renders with null params (no deep link).
-    _loadDeepLink();
-  }
-
-  Future<void> _loadDeepLink() async {
-    try {
-      final params = await DeepLinkHandler.parseInitial();
-      if (mounted && params.hasAny) {
-        setState(() => _deepLink = params);
-      }
-    } catch (_) {
-      // Ignore — deep link is optional, app works without it.
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     if (!settings.onboardingDone) return const OnboardingScreen();
 
-    return _MainShell(
-      initialAmount: _deepLink?.amount,
-      initialRate: _deepLink?.rate,
-    );
+    return const _MainShell();
   }
 }
 
 /// Bottom-navigation shell with 3 tabs.
 class _MainShell extends ConsumerStatefulWidget {
-  final double? initialAmount;
-  final double? initialRate;
-
-  const _MainShell({
-    this.initialAmount,
-    this.initialRate,
-  });
+  const _MainShell();
 
   @override
   ConsumerState<_MainShell> createState() => _MainShellState();
@@ -107,11 +70,7 @@ class _MainShellState extends ConsumerState<_MainShell> {
     ),
   ];
 
-  // Screens are built in build() to pass deep link params.
-  Widget _buildCalculatorScreen() => GstCalculatorScreen(
-    initialAmount: widget.initialAmount,
-    initialRate: widget.initialRate,
-  );
+  Widget _buildCalculatorScreen() => const GstCalculatorScreen();
 
   Widget _buildHistoryScreen() => const HistoryScreen();
 

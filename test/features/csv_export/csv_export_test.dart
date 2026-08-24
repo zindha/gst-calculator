@@ -50,8 +50,12 @@ void main() {
 
       test('formats rates correctly', () {
         final csv = CsvExport.buildHistoryCsv(entries);
-        expect(csv, contains('18.0'));
-        expect(csv, contains('5.0'));
+        // Whole-number slabs render without a decimal (18, 5) — the same
+        // formatRate convention used everywhere else in the app. The rate
+        // column sits between Amount and Tax Type, so match the full field
+        // sequence to avoid false positives.
+        expect(csv, contains('1000,18,Exclusive'));
+        expect(csv, contains('500,5,Inclusive'));
       });
 
       test('formats tax type labels', () {

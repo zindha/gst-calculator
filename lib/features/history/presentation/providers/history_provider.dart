@@ -32,13 +32,19 @@ class HistoryNotifier extends JsonListNotifier<HistoryEntry> {
 
   /// Deletes the entry with the given [id].
   Future<void> deleteEntry(String id) async {
-    await store.delete(id);
+    // Serialize with any in-flight write (same queue as [addEntry]) so a
+    // queued save can't resurrect an entry this delete just removed.
+    _writeQueue = _writeQueue.then((_) => store.delete(id)).catchError((_) {});
+    await _writeQueue;
     state = state.where((e) => e.id != id).toList();
   }
 
   /// Clears all history entries.
   Future<void> clearAll() async {
-    await store.clear();
+    // Same queue discipline as [deleteEntry]: a pending auto-save write must
+    // complete (or fail) before the clear, or it could re-persist entries.
+    _writeQueue = _writeQueue.then((_) => store.clear()).catchError((_) {});
+    await _writeQueue;
     state = [];
   }
 }

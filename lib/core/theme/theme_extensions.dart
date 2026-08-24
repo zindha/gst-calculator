@@ -79,6 +79,8 @@ class GSTColorScheme extends ThemeExtension<GSTColorScheme> {
   /// Returns the semantic color for a GST slab [rate].
   Color rateColor(double rate) => switch (rate) {
     0 => rate0Color,
+    0.25 => rate0Color, // nil/near-nil — neutral grey family
+    3 => rate5Color, // low slab — green family
     5 => rate5Color,
     12 => rate12Color,
     18 => rate18Color,

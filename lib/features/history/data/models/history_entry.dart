@@ -1,4 +1,5 @@
 import '../../../../core/utils/currency_formatter.dart';
+import '../../../../core/utils/rate_formatter.dart';
 
 /// A single saved GST calculation entry.
 class HistoryEntry {
@@ -52,10 +53,12 @@ class HistoryEntry {
   /// Creates a summary string for display.
   String get summary {
     final amt = amountText;
+    // formatRate renders 18.0 as '18' and 0.25 as '0.25' — the same
+    // convention as every other rate label in the app.
     if (isInclusive) {
-      return '₹$amt (gross) @ $rate% → Base: ${CurrencyFormatter.format(baseAmount)}';
+      return '₹$amt (gross) @ ${formatRate(rate)}% → Base: ${CurrencyFormatter.format(baseAmount)}';
     }
-    return '₹$amt @ $rate% → Total: ${CurrencyFormatter.format(totalAmount)}';
+    return '₹$amt @ ${formatRate(rate)}% → Total: ${CurrencyFormatter.format(totalAmount)}';
   }
 
   // ── Serialisation ───────────────────────────────────────────────────

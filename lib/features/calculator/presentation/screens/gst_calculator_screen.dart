@@ -25,17 +25,7 @@ import '../widgets/results_breakdown_card.dart';
 /// is supported. The `FittedBox`/`Flexible` layout guards below keep
 /// display numerals and controls from overflowing at large font sizes.
 class GstCalculatorScreen extends ConsumerStatefulWidget {
-  /// Optional initial amount to pre-fill (from deep link).
-  final double? initialAmount;
-
-  /// Optional initial GST rate to pre-select (from deep link).
-  final double? initialRate;
-
-  const GstCalculatorScreen({
-    super.key,
-    this.initialAmount,
-    this.initialRate,
-  });
+  const GstCalculatorScreen({super.key});
 
   @override
   ConsumerState<GstCalculatorScreen> createState() =>
@@ -46,33 +36,6 @@ class _GstCalculatorScreenState extends ConsumerState<GstCalculatorScreen> {
   final TextEditingController _amountController = TextEditingController();
   final FocusNode _amountFocusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
-  bool _initialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Apply deep link parameters on first frame.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_initialized) return;
-      _initialized = true;
-      _applyDeepLinkParams();
-    });
-  }
-
-  void _applyDeepLinkParams() {
-    final amount = widget.initialAmount;
-    final rate = widget.initialRate;
-    if (amount != null && amount > 0) {
-      _amountController.text = amount.toStringAsFixed(2);
-      ref.read(gstCalculatorProvider.notifier).updateAmount(_amountController.text);
-    }
-    if (rate != null && rate >= 0 && rate <= 100) {
-      ref.read(gstCalculatorProvider.notifier).selectSlab(rate);
-    }
-    if (amount != null || rate != null) {
-      _amountFocusNode.requestFocus();
-    }
-  }
 
   @override
   void dispose() {

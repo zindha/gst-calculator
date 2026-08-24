@@ -12,11 +12,13 @@ void main() {
       expect(formatRate(28), '28');
     });
 
-    test('fractional rates keep up to two decimals, trailing zeros stripped', () {
+    test('fractional rates keep up to three decimals, trailing zeros stripped', () {
       expect(formatRate(0.25), '0.25');
       expect(formatRate(1.5), '1.5');
       expect(formatRate(12.5), '12.5');
       expect(formatRate(7.25), '7.25');
+      // Half-rate split label of the 0.25% slab renders exactly, not rounded.
+      expect(formatRate(0.125), '0.125');
     });
 
     test('rates with trailing zeros after decimal are stripped', () {

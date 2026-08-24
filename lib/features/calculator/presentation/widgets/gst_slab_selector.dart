@@ -63,11 +63,13 @@ class _GstSlabSelectorState extends ConsumerState<GstSlabSelector> {
                   final selected =
                       !state.isCustomSlab && state.selectedSlab == slab;
                   return BrandChip(
-                    label: '${slab.toStringAsFixed(0)}%',
+                    // formatRate renders fractional slabs correctly:
+                    // 0.25 → '0.25%', whole slabs like 18 → '18%'.
+                    label: '${formatRate(slab)}%',
                     icon: selected ? LucideIcons.check : null,
                     selected: selected,
                     semanticsLabel:
-                        '${slab.toStringAsFixed(0)}% GST rate'
+                        '${formatRate(slab)}% GST rate'
                         '${selected ? ', selected' : ''}',
                     onTap: () {
                       HapticFeedback.selectionClick();

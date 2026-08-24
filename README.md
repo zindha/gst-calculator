@@ -1,7 +1,7 @@
 # GST Calculator
 
 A Flutter app for calculating Indian GST (Goods & Services Tax) and tracking
-calculation history — built for Android, iOS, and web.
+calculation history — built for Android.
 
 ## Features
 
@@ -69,12 +69,6 @@ flutter build appbundle
 
 # Android APK (for direct install)
 flutter build apk
-
-# iOS archive (requires macOS + Xcode)
-flutter build ipa
-
-# Web
-flutter build web
 ```
 
 ## Continuous integration (GitHub Actions)
@@ -104,8 +98,8 @@ gitignored and must be backed up separately.
   `android/app/build.gradle.kts` before publishing. It cannot be changed after
   your app is on the Play Store.
 - **App icon** — generated from the root `app-icon.png` by the
-  `flutter_launcher_icons` dev tool (Android legacy + adaptive, iOS, web). To
-  rebrand, replace `app-icon.png` and re-run
+  `flutter_launcher_icons` dev tool (Android legacy + adaptive). To rebrand,
+  replace `app-icon.png` and re-run
   `dart run flutter_launcher_icons`. The splash logo is a separate asset
   (`assets/icon/splash_logo.png`, regenerated with
   `dart run flutter_native_splash:create`).

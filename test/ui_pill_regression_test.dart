@@ -61,7 +61,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // All five slab pills (plus Custom) share one height.
+    // All seven slab pills (plus Custom) share one height.
     final heights = <double>[];
     for (final label in ['3%', '5%', '12%', '18%', '28%', 'Custom']) {
       heights.add(tester.getSize(_chipOf(label)).height);

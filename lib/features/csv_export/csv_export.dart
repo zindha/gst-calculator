@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:share_plus/share_plus.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../core/utils/money.dart';
+import '../../core/utils/rate_formatter.dart';
 import '../../features/history/data/models/history_entry.dart';
 
 /// Utility to export data as CSV files and share them.
@@ -61,7 +62,7 @@ class CsvExport {
           DateFormatter.date(dt),
           DateFormatter.time(dt),
           e.amountText,
-          e.rate.toStringAsFixed(1),
+          formatRate(e.rate),
           e.isInclusive ? 'Inclusive' : 'Exclusive',
           e.isIntraState ? 'Intra-State' : 'Inter-State',
           b.base.toStringAsFixed(2),
@@ -80,7 +81,7 @@ class CsvExport {
       Uint8List.fromList(utf8.encode(csv));
 
   /// Shares calculation history CSV as an in-memory [XFile] (works on
-  /// Android, iOS and web — no temp-file write).
+  /// Android — no temp-file write).
   ///
   /// The filename is passed via [ShareParams.fileNameOverrides] because
   /// cross_file's IO [XFile.fromData] ignores its `name` parameter; the
